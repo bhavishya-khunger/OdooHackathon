@@ -23,7 +23,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
   const HOUR_HEIGHT = 80;
 
   return (
-    <div className="relative bg-bg-base border border-border-base rounded-2xl p-6 md:p-8 overflow-hidden transition-colors duration-300">
+    <div className="relative bg-surface border border-border rounded-2xl p-6 md:p-8 overflow-hidden transition-colors duration-300">
       <div className="relative" style={{ height: `${TOTAL_HOURS * HOUR_HEIGHT}px` }}>
         
         {/* Background Grid Lines */}
@@ -33,10 +33,10 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
             className="absolute w-full flex items-center gap-4"
             style={{ top: `${i * HOUR_HEIGHT}px`, transform: 'translateY(-50%)' }}
           >
-            <span className="text-[11px] font-mono font-medium text-text-muted w-12 text-right shrink-0">
+            <span className="text-[11px] font-mono font-medium text-muted w-12 text-right shrink-0">
               {String(TIMELINE_START_HOUR + i).padStart(2, '0')}:00
             </span>
-            <div className="flex-1 border-b border-border-base transition-colors duration-300"></div>
+            <div className="flex-1 border-b border-border transition-colors duration-300"></div>
           </div>
         ))}
 
@@ -57,7 +57,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
                   onClick={() => onEditBooking(booking)}
-                  className={`absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors duration-300 ${
+                  className={`absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-primary transition-colors duration-300 ${
                     booking.status === 'Ongoing' ? 'bg-[#f0fdf4] border-[#bbf7d0] dark:bg-[#10301a] dark:border-[#1a4d29]' :
                     booking.status === 'Completed' ? 'bg-[#f3f4f6] border-[#e5e7eb] dark:bg-[#1f2937] dark:border-[#374151] opacity-70' :
                     booking.status === 'Cancelled' ? 'bg-[#fef2f2] border-[#fecaca] dark:bg-[#2a1215] dark:border-[#4a1a1f] opacity-50' :
@@ -76,9 +76,9 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   }`} />
                   <div className="flex items-start justify-between gap-2">
                     <h4 className={`font-semibold text-[13px] transition-colors duration-300 ${
-                      booking.status === 'Cancelled' ? 'line-through text-text-muted' : 
+                      booking.status === 'Cancelled' ? 'line-through text-muted' : 
                       booking.status === 'Ongoing' ? 'text-[#166534] dark:text-[#4ade80]' :
-                      'text-text-primary'
+                      'text-foreground'
                     }`}>
                       {booking.title}
                     </h4>
@@ -87,7 +87,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                     )}
                   </div>
                   <p className={`text-[11px] font-mono mt-1 transition-colors duration-300 ${
-                    booking.status === 'Cancelled' ? 'text-text-muted' : 'text-text-secondary group-hover:text-text-primary'
+                    booking.status === 'Cancelled' ? 'text-muted' : 'text-text-secondary group-hover:text-foreground'
                   }`}>
                     {booking.startTime} - {booking.endTime}
                     <span className="ml-2 px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[9px] uppercase tracking-wider">

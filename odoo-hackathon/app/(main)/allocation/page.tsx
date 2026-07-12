@@ -5,81 +5,76 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, History, ArrowRightLeft, CheckCircle2, Box, Users, CalendarClock, CornerDownLeft, Check, X } from 'lucide-react';
 import PageHeader from '@/components/ui/PageHeader';
 import { ProcessReturnModal } from '@/components/allocation/ProcessReturnModal';
-
-// --- MOCK DATA ---
-const initialAssets = [
-  {
-    assetId: "AF-0114",
-    name: "Dell laptop",
-    status: "Allocated",
-    currentOwner: { employeeId: "emp_042", name: "Priya Shah", department: "Engineering" },
-    expectedReturnDate: "2026-12-31", // Future
-    history: [
-      { id: "log_88", date: "2026-03-12", action: "Allocated to Priya Shah - Engineering" }
-    ]
-  },
-  {
-    assetId: "AF-0062",
-    name: "Sony 4K Projector",
-    status: "Allocated",
-    currentOwner: { employeeId: "emp_089", name: "Rahul Verma", department: "Marketing" },
-    expectedReturnDate: "2026-07-01", // Overdue!
-    history: [
-      { id: "log_92", date: "2026-04-02", action: "Allocated to Rahul Verma - Marketing" }
-    ]
-  },
-  {
-    assetId: "AF-0201",
-    name: "Ergonomic Office Chair",
-    status: "Available",
-    currentOwner: null,
-    expectedReturnDate: null,
-    history: [
-      { id: "log_105", date: "2026-05-10", action: "Returned by Sarah Jones - Good condition" }
-    ]
-  }
-];
-
-const initialTransfers = [
-  {
-    id: "tr_001",
-    assetId: "AF-0114",
-    assetName: "Dell laptop",
-    from: { name: "Priya Shah", department: "Engineering" },
-    to: { employeeId: "emp_115", name: "Amit Patel", department: "Engineering" },
-    reason: "Priya is getting a new Macbook, passing this to Amit.",
-    dateRequested: "2026-07-10"
-  }
-];
-
-const employeeDirectory = [
-  { id: "emp_042", name: "Priya Shah", department: "Engineering" },
-  { id: "emp_089", name: "Rahul Verma", department: "Marketing" },
-  { id: "emp_102", name: "Sarah Jones", department: "Design" },
-  { id: "emp_115", name: "Amit Patel", department: "Engineering" }
-];
+import { apiFetch } from '@/lib/api';
+import { useEffect } from 'react';
 
 export default function AllocationTransferPage() {
-  const [activeTab, setActiveTab] = useState<'assign' | 'pending' | 'returns'>('assign');
+    const [activeTab, setActiveTab] = useState<'assign' | 'pending' | 'returns'>('assign');
 
-  const [assets, setAssets] = useState(initialAssets);
-  const [transfers, setTransfers] = useState(initialTransfers);
+  const [assets, setAssets] = useState<any[]>([]);
+  const [transfers, setTransfers] = useState<any[]>([]);
+  const [employeeDirectory, setEmployeeDirectory] = useState<any[]>([]);
+  const [activeAllocations, setActiveAllocations] = useState<any[]>([]);
+  const [activeAssetHistory, setActiveAssetHistory] = useState<any[]>([]);
 
-  // -- Tab 1: Assign/Transfer State
-  const [activeAssetId, setActiveAssetId] = useState(assets[0].assetId);
-  const activeAsset = assets.find(a => a.assetId === activeAssetId) || assets[0];
+  const [activeAssetId, setActiveAssetId] = useState<string>('');
   
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
   const [expectedReturn, setExpectedReturn] = useState('');
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // -- Tab 3: Returns State
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [assetToReturn, setAssetToReturn] = useState<any>(null);
 
-  // --- Handlers ---
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [assetsData, employeesData, allocData, transfersData]: any[] = await Promise.all([
+        apiFetch('/assets'),
+        apiFetch('/employees'),
+        apiFetch('/allocations?status=active'),
+        apiFetch('/transfers?status=pending')
+      ]);
+      setAssets(assetsData);
+      setEmployeeDirectory(employeesData);
+      setActiveAllocations(allocData.items || []);
+      setTransfers(transfersData.items || []);
+      
+      if (assetsData.length > 0 && !activeAssetId) {
+        setActiveAssetId(String(assetsData[0].id));
+      }
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!activeAssetId) return;
+    apiFetch(`/assets/${activeAssetId}/history`)
+      .then((res: any) => {
+         const combined = [...(res.allocations || []), ...(res.maintenance_requests || [])];
+         combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+         setActiveAssetHistory(combined);
+      })
+      .catch(console.error);
+  }, [activeAssetId]);
+
+  const activeAsset = assets.find(a => String(a.id) === String(activeAssetId)) || assets[0];
+  const currentAllocation = activeAsset ? activeAllocations.find(alloc => alloc.asset_id === activeAsset.id) : null;
+  const currentOwner = currentAllocation ? {
+      employeeId: currentAllocation.user_id,
+      name: currentAllocation.user_name || 'Unknown',
+      department: currentAllocation.department_name || ''
+  } : null;
 
   const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setActiveAssetId(e.target.value);
@@ -89,112 +84,122 @@ export default function AllocationTransferPage() {
     setSuccessMsg('');
   };
 
-  const handleSubmitAssign = (e: React.FormEvent) => {
+  const handleSubmitAssign = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedEmployeeId) return;
+    if (!selectedEmployeeId || !activeAsset) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const emp = employeeDirectory.find(e => e.id === selectedEmployeeId);
-      
-      setAssets(prev => prev.map(a => {
-        if (a.assetId === activeAsset.assetId) {
-          return {
-            ...a,
-            status: "Allocated",
-            currentOwner: emp ? { employeeId: emp.id, name: emp.name, department: emp.department } : null,
-            expectedReturnDate: expectedReturn || null,
-            history: [{ id: `log_${Date.now()}`, date: new Date().toISOString().split('T')[0], action: `Allocated to ${emp?.name} - ${emp?.department}` }, ...a.history]
-          };
-        }
-        return a;
-      }));
-
-      setIsSubmitting(false);
-      setSuccessMsg(`Successfully allocated ${activeAsset.name} to ${emp?.name}.`);
+    try {
+      await apiFetch('/allocations', {
+        method: 'POST',
+        body: JSON.stringify({
+          asset_id: activeAsset.id,
+          user_id: Number(selectedEmployeeId),
+          expected_return_date: expectedReturn || null
+        })
+      });
+      setSuccessMsg(`Successfully allocated ${activeAsset.name}.`);
       setSelectedEmployeeId('');
       setExpectedReturn('');
       setTimeout(() => setSuccessMsg(''), 3000);
-    }, 800);
+      fetchData();
+      
+      // Refresh history
+      apiFetch(`/assets/${activeAsset.id}/history`)
+        .then((res: any) => {
+           const combined = [...(res.allocations || []), ...(res.maintenance_requests || [])];
+           combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+           setActiveAssetHistory(combined);
+        })
+        .catch(console.error);
+        
+    } catch (error: any) {
+      alert(`Failed to allocate asset: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSubmitTransfer = (e: React.FormEvent) => {
+  const handleSubmitTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedEmployeeId || !reason) return;
+    if (!selectedEmployeeId || !reason || !currentAllocation) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const emp = employeeDirectory.find(e => e.id === selectedEmployeeId);
-      if (emp) {
-        setTransfers(prev => [{
-          id: `tr_${Date.now()}`,
-          assetId: activeAsset.assetId,
-          assetName: activeAsset.name,
-          from: activeAsset.currentOwner!,
-          to: { employeeId: emp.id, name: emp.name, department: emp.department },
-          reason,
-          dateRequested: new Date().toISOString().split('T')[0]
-        }, ...prev]);
-      }
-
-      setIsSubmitting(false);
+    try {
+      await apiFetch('/transfers', {
+        method: 'POST',
+        body: JSON.stringify({
+          allocation_id: currentAllocation.id,
+          target_user_id: Number(selectedEmployeeId),
+          reason
+        })
+      });
       setSuccessMsg(`Transfer request submitted for ${activeAsset.name}.`);
       setSelectedEmployeeId('');
       setReason('');
       setTimeout(() => setSuccessMsg(''), 3000);
-    }, 800);
+      fetchData();
+    } catch (error: any) {
+      alert(`Failed to submit transfer request: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleApproveTransfer = (transferId: string) => {
-    const transfer = transfers.find(t => t.id === transferId);
-    if (!transfer) return;
+  const handleApproveTransfer = async (transferId: number) => {
+    try {
+      await apiFetch(`/transfers/${transferId}/approve`, { method: 'POST' });
+      fetchData();
+    } catch (error: any) {
+      alert(`Failed to approve transfer: ${error.message}`);
+    }
+  };
 
-    // Update asset
-    setAssets(prev => prev.map(a => {
-      if (a.assetId === transfer.assetId) {
-        return {
-          ...a,
-          currentOwner: transfer.to,
-          history: [{ id: `log_${Date.now()}`, date: new Date().toISOString().split('T')[0], action: `Transfer approved. Re-allocated to ${transfer.to.name}.` }, ...a.history]
-        };
+  const handleRejectTransfer = async (transferId: number) => {
+    try {
+      await apiFetch(`/transfers/${transferId}/reject`, { method: 'POST' });
+      fetchData();
+    } catch (error: any) {
+      alert(`Failed to reject transfer: ${error.message}`);
+    }
+  };
+
+  const handleProcessReturn = async (assetId: string | number, notes: string, newStatus: string) => {
+    const alloc = activeAllocations.find(a => String(a.asset_id) === String(assetId));
+    if (!alloc) return;
+    
+    try {
+      await apiFetch(`/allocations/${alloc.id}/return`, {
+        method: 'POST',
+        body: JSON.stringify({ condition_notes: notes })
+      });
+      
+      // Also update asset status if newStatus is different from 'available'
+      // Note: the return endpoint already sets it to available if it's not set.
+      if (newStatus !== 'available') {
+         await apiFetch(`/assets/${assetId}/status`, {
+             method: 'PATCH',
+             body: JSON.stringify({ status: newStatus })
+         });
       }
-      return a;
-    }));
-
-    // Remove transfer
-    setTransfers(prev => prev.filter(t => t.id !== transferId));
+      
+      setIsReturnModalOpen(false);
+      setAssetToReturn(null);
+      fetchData();
+    } catch (error: any) {
+      alert(`Failed to process return: ${error.message}`);
+    }
   };
 
-  const handleRejectTransfer = (transferId: string) => {
-    setTransfers(prev => prev.filter(t => t.id !== transferId));
-  };
-
-  const handleProcessReturn = (assetId: string, notes: string, newStatus: string) => {
-    setAssets(prev => prev.map(a => {
-      if (a.assetId === assetId) {
-        return {
-          ...a,
-          status: newStatus,
-          currentOwner: null,
-          expectedReturnDate: null,
-          history: [{ id: `log_${Date.now()}`, date: new Date().toISOString().split('T')[0], action: `Returned. Notes: ${notes}. Status set to ${newStatus}.` }, ...a.history]
-        };
-      }
-      return a;
-    }));
-    setIsReturnModalOpen(false);
-    setAssetToReturn(null);
-  };
-
-  // Helper for overdue
   const isOverdue = (dateString: string | null) => {
     if (!dateString) return false;
-    return new Date(dateString) < new Date('2026-07-12'); // Using static date for demo
+    // Use actual current date for comparison instead of hardcoded
+    return new Date(dateString) < new Date(); 
   };
 
   return (
-    <div className="min-h-full bg-bg-base text-text-primary p-10 font-sans">
-      <div className="max-w-[900px] mx-auto">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 font-sans">
+      <div>
         <PageHeader title="Allocation & Transfer" subtitle="Manage asset assignments, handle transfer requests, and process returns." />
 
         <AnimatePresence>
@@ -214,10 +219,10 @@ export default function AllocationTransferPage() {
         </AnimatePresence>
 
         {/* Tabs */}
-        <div className="flex border-b border-border-base mb-8 overflow-x-auto hide-scrollbar">
+        <div className="flex border-b border-border mb-8 overflow-x-auto hide-scrollbar">
           <button
             onClick={() => setActiveTab('assign')}
-            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative ${activeTab === 'assign' ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary'}`}
+            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative ${activeTab === 'assign' ? 'text-foreground' : 'text-muted hover:text-muted-foreground'}`}
           >
             Assign / Transfer
             {activeTab === 'assign' && (
@@ -226,11 +231,11 @@ export default function AllocationTransferPage() {
           </button>
           <button
             onClick={() => setActiveTab('pending')}
-            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative flex items-center gap-2 ${activeTab === 'pending' ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary'}`}
+            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative flex items-center gap-2 ${activeTab === 'pending' ? 'text-foreground' : 'text-muted hover:text-muted-foreground'}`}
           >
             Pending Transfers
             {transfers.length > 0 && (
-              <span className="bg-bg-inverted text-text-inverted text-[10px] px-2 py-0.5 rounded-full font-bold">{transfers.length}</span>
+              <span className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full font-bold">{transfers.length}</span>
             )}
             {activeTab === 'pending' && (
               <motion.div layoutId="alloc-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-text-primary" />
@@ -238,7 +243,7 @@ export default function AllocationTransferPage() {
           </button>
           <button
             onClick={() => setActiveTab('returns')}
-            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative ${activeTab === 'returns' ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary'}`}
+            className={`px-6 py-4 text-[13px] font-semibold whitespace-nowrap transition-colors relative ${activeTab === 'returns' ? 'text-foreground' : 'text-muted hover:text-muted-foreground'}`}
           >
             Returns
             {activeTab === 'returns' && (
@@ -246,26 +251,36 @@ export default function AllocationTransferPage() {
             )}
           </button>
         </div>
+          </div>
 
-        {/* --- TAB 1: ASSIGN / TRANSFER --- */}
+
+        <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden relative transition-colors duration-300 p-6 sm:p-8 min-h-[400px]">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full py-20 text-muted">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+              <p>Loading allocation data...</p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* --- TAB 1: ASSIGN / TRANSFER --- */}
         {activeTab === 'assign' && (
-          <div className="bg-bg-surface border border-border-base rounded-3xl p-8 space-y-8">
+          <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
             <div className="space-y-4">
               <div>
-                <label className="block text-[13px] font-medium text-text-secondary mb-2">Select Asset</label>
+                <label className="block text-[13px] font-medium text-muted-foreground mb-2">Select Asset</label>
                 <div className="relative">
                   <select 
                     value={activeAssetId}
                     onChange={handleAssetChange}
-                    className="w-full px-4 py-3 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none cursor-pointer transition-colors"
                   >
                     {assets.map(asset => (
-                      <option key={asset.assetId} value={asset.assetId}>
-                        {asset.assetId} - {asset.name} ({asset.status})
+                      <option key={asset.id} value={asset.id}>
+                        {asset.id} - {asset.name} ({asset.status})
                       </option>
                     ))}
                   </select>
-                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-text-muted">
+                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-muted">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -273,32 +288,32 @@ export default function AllocationTransferPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 bg-bg-surface-alt border border-border-base rounded-2xl">
-                <div className="w-12 h-12 rounded-xl bg-bg-surface-alt border border-border-strong flex items-center justify-center shrink-0">
-                  <Box className="h-6 w-6 text-text-secondary" />
+              <div className="flex items-center gap-4 p-4 bg-muted border border-border rounded-2xl">
+                <div className="w-12 h-12 rounded-xl bg-muted border border-border flex items-center justify-center shrink-0">
+                  <Box className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-semibold text-text-primary">{activeAsset.assetId} - {activeAsset.name}</h3>
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 mt-1 rounded-full text-[10px] font-mono font-semibold border ${activeAsset.status === 'Available' ? 'bg-[#dcfce7] text-[#16a34a] border-[#bbf7d0] dark:bg-[#10301a] dark:text-[#4ade80] dark:border-[#1a4d29]' : 'bg-[#e0f2fe] text-[#0284c7] border-[#bae6fd] dark:bg-[#102a40] dark:text-[#4ea8ff] dark:border-[#1a4266]'}`}>
-                    {activeAsset.status}
+                  <h3 className="text-[15px] font-semibold text-foreground">{activeAsset?.tag || activeAsset?.id} - {activeAsset?.name}</h3>
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 mt-1 rounded-full text-[10px] font-mono font-semibold border ${activeAsset?.status === 'available' ? 'bg-[#dcfce7] text-[#16a34a] border-[#bbf7d0] dark:bg-[#10301a] dark:text-[#4ade80] dark:border-[#1a4d29]' : 'bg-[#e0f2fe] text-[#0284c7] border-[#bae6fd] dark:bg-[#102a40] dark:text-[#4ea8ff] dark:border-[#1a4266]'}`}>
+                    {activeAsset?.status}
                   </span>
                 </div>
               </div>
             </div>
 
-            {activeAsset.status === 'Available' ? (
-              <form onSubmit={handleSubmitAssign} className="space-y-6 bg-bg-base border border-border-base p-6 rounded-3xl">
-                <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
+            {activeAsset?.status === 'available' ? (
+              <form onSubmit={handleSubmitAssign} className="space-y-6 bg-background border border-border p-6 rounded-2xl shadow-sm">
+                <h3 className="text-[11px] font-bold text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
                   <Users className="h-[14px] w-[14px]" /> Allocate Asset
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-[13px] font-medium text-text-secondary mb-2">Assign To *</label>
+                    <label className="block text-[13px] font-medium text-muted-foreground mb-2">Assign To *</label>
                     <select 
                       value={selectedEmployeeId}
                       onChange={(e) => setSelectedEmployeeId(e.target.value)}
                       required
-                      className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer"
+                      className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none cursor-pointer"
                     >
                       <option value="" disabled>Select employee...</option>
                       {employeeDirectory.map(emp => (
@@ -307,17 +322,17 @@ export default function AllocationTransferPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[13px] font-medium text-text-secondary mb-2">Expected Return Date</label>
+                    <label className="block text-[13px] font-medium text-muted-foreground mb-2">Expected Return Date</label>
                     <input 
                       type="date" 
                       value={expectedReturn}
                       onChange={(e) => setExpectedReturn(e.target.value)}
-                      className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus"
+                      className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
-                  <button type="submit" disabled={!selectedEmployeeId || isSubmitting} className="px-8 py-3 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                  <button type="submit" disabled={!selectedEmployeeId || isSubmitting} className="px-8 py-3 text-[13px] font-medium text-primary-foreground bg-primary hover:opacity-90 rounded-full disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                     {isSubmitting ? 'Processing...' : 'Allocate'}
                   </button>
                 </div>
@@ -329,44 +344,44 @@ export default function AllocationTransferPage() {
                     <AlertTriangle className="h-5 w-5 text-[#ff4444]" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-[#ff8888]">Currently Allocated to {activeAsset.currentOwner?.name}</h3>
+                    <h3 className="text-sm font-semibold text-[#ff8888]">Currently Allocated to {currentOwner?.name}</h3>
                     <p className="text-[13px] text-[#ffaaaa] mt-1">Direct reassignment is locked. You must initiate a transfer request workflow.</p>
                   </div>
                 </div>
-                <form onSubmit={handleSubmitTransfer} className="space-y-6 bg-bg-base border border-border-base p-6 rounded-3xl">
-                  <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
+                <form onSubmit={handleSubmitTransfer} className="space-y-6 bg-background border border-border p-6 rounded-2xl shadow-sm">
+                  <h3 className="text-[11px] font-bold text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
                     <ArrowRightLeft className="h-[14px] w-[14px]" /> Transfer Request
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-[13px] font-medium text-text-secondary mb-2">From</label>
-                      <input type="text" value={activeAsset.currentOwner?.name || ''} disabled className="w-full px-4 py-3 bg-bg-surface-alt border border-border-base rounded-xl text-[13px] text-text-muted cursor-not-allowed" />
+                      <label className="block text-[13px] font-medium text-muted-foreground mb-2">From</label>
+                      <input type="text" value={currentOwner?.name || ''} disabled className="w-full px-4 py-3 bg-muted border border-border rounded-xl text-[13px] text-muted cursor-not-allowed" />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-text-secondary mb-2">To (New Assignee) *</label>
+                      <label className="block text-[13px] font-medium text-muted-foreground mb-2">To (New Assignee) *</label>
                       <select 
                         value={selectedEmployeeId}
                         onChange={(e) => setSelectedEmployeeId(e.target.value)}
                         required
-                        className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none cursor-pointer"
                       >
                         <option value="" disabled>Select employee...</option>
-                        {employeeDirectory.filter(emp => emp.id !== activeAsset.currentOwner?.employeeId).map(emp => (
+                        {employeeDirectory.filter(emp => emp.id !== currentOwner?.employeeId).map(emp => (
                           <option key={emp.id} value={emp.id}>{emp.name}</option>
                         ))}
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[13px] font-medium text-text-secondary mb-2">Reason for Transfer *</label>
+                    <label className="block text-[13px] font-medium text-muted-foreground mb-2">Reason for Transfer *</label>
                     <textarea 
                       value={reason} onChange={(e) => setReason(e.target.value)} required rows={3}
                       placeholder="Why is this asset being transferred?"
-                      className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus resize-none"
+                      className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-[13px] text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                     />
                   </div>
                   <div className="flex justify-end pt-2">
-                    <button type="submit" disabled={!selectedEmployeeId || !reason || isSubmitting} className="px-8 py-3 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                    <button type="submit" disabled={!selectedEmployeeId || !reason || isSubmitting} className="px-8 py-3 text-[13px] font-medium text-primary-foreground bg-primary hover:opacity-90 rounded-full disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                       {isSubmitting ? 'Processing...' : 'Submit Request'}
                     </button>
                   </div>
@@ -374,20 +389,20 @@ export default function AllocationTransferPage() {
               </>
             )}
 
-            <div className="border-t border-border-base pt-8">
-              <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-6">
+            <div className="border-t border-border pt-8">
+              <h3 className="text-[11px] font-bold text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-6">
                 <History className="h-[14px] w-[14px]" /> Allocation History
               </h3>
               <div className="space-y-4">
-                {activeAsset.history.map((log: any, index: number) => (
-                  <div key={log.id} className="flex gap-4 group">
+                {activeAssetHistory.map((log: any, index: number) => (
+                  <div key={log.id + (log.description ? 'm' : 'a')} className="flex gap-4 group">
                     <div className="flex flex-col items-center mt-1">
                       <div className="w-2 h-2 rounded-full bg-[#555] border-2 border-[#141414]" />
-                      {index !== activeAsset.history.length - 1 && <div className="w-px h-full bg-bg-surface-hover mt-1" />}
+                      {index !== activeAssetHistory.length - 1 && <div className="w-px h-full hover:bg-accent mt-1" />}
                     </div>
                     <div className="pb-4">
-                      <span className="text-[11px] font-mono text-text-secondary font-semibold mb-1 block tracking-widest">{log.date}</span>
-                      <p className="text-[13px] text-text-primary">{log.action}</p>
+                      <span className="text-[11px] font-mono text-muted-foreground font-semibold mb-1 block tracking-widest">{log.created_at.split('T')[0]}</span>
+                      <p className="text-[13px] text-foreground">{log.description ? `Maintenance: ${log.description} (${log.status})` : `Allocation ${log.status} to ${log.user_name || 'Department'}`}</p>
                     </div>
                   </div>
                 ))}
@@ -398,36 +413,36 @@ export default function AllocationTransferPage() {
 
         {/* --- TAB 2: PENDING TRANSFERS --- */}
         {activeTab === 'pending' && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
             {transfers.length === 0 ? (
-              <div className="bg-bg-surface border border-border-base rounded-3xl p-12 text-center flex flex-col items-center">
+              <div className="bg-surface border border-border rounded-3xl p-12 text-center flex flex-col items-center">
                 <CheckCircle2 className="h-10 w-10 text-[#16a34a] mb-4 opacity-50" />
-                <h3 className="text-[15px] font-semibold text-text-primary mb-1">All Caught Up!</h3>
-                <p className="text-[13px] text-text-secondary">There are no pending transfer requests at the moment.</p>
+                <h3 className="text-[15px] font-semibold text-foreground mb-1">All Caught Up!</h3>
+                <p className="text-[13px] text-muted-foreground">There are no pending transfer requests at the moment.</p>
               </div>
             ) : (
               transfers.map(tr => (
-                <div key={tr.id} className="bg-bg-surface border border-border-base rounded-3xl p-6 flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center">
+                <div key={tr.id} className="bg-surface border border-border rounded-3xl p-6 flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center">
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold border bg-[#fef3c7] text-[#d97706] border-[#fde68a] dark:bg-[#3d250c] dark:text-[#fbbf24] dark:border-[#663d14]">Pending Approval</span>
-                      <span className="text-[11px] font-medium text-text-muted">{tr.dateRequested}</span>
+                      <span className="text-[11px] font-medium text-muted">{tr.created_at.split('T')[0]}</span>
                     </div>
                     <div>
-                      <h4 className="text-[15px] font-semibold text-text-primary">{tr.assetId} - {tr.assetName}</h4>
-                      <div className="flex items-center gap-2 mt-2 text-[13px] text-text-secondary">
-                        <span className="font-medium">{tr.from.name}</span>
-                        <ArrowRightLeft className="h-3 w-3 text-text-muted" />
-                        <span className="font-medium text-text-primary">{tr.to.name}</span>
+                      <h4 className="text-[15px] font-semibold text-foreground">{tr.assetId} - {tr.allocation.asset_name}</h4>
+                      <div className="flex items-center gap-2 mt-2 text-[13px] text-muted-foreground">
+                        <span className="font-medium">{tr.requested_by_name}</span>
+                        <ArrowRightLeft className="h-3 w-3 text-muted" />
+                        <span className="font-medium text-foreground">{tr.target_user_name || tr.target_department_name}</span>
                       </div>
-                      <p className="text-[12px] text-text-muted mt-2 border-l-2 border-border-strong pl-2 italic">"{tr.reason}"</p>
+                      <p className="text-[12px] text-muted mt-2 border-l-2 border-border pl-2 italic">"{tr.reason}"</p>
                     </div>
                   </div>
                   <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto shrink-0">
-                    <button onClick={() => handleApproveTransfer(tr.id)} className="flex-1 px-4 py-2 bg-bg-inverted text-text-inverted hover:opacity-90 rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-colors">
+                    <button onClick={() => handleApproveTransfer(tr.id)} className="flex-1 px-4 py-2 bg-primary text-primary-foreground hover:opacity-90 rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-colors">
                       <Check className="h-4 w-4" /> Approve
                     </button>
-                    <button onClick={() => handleRejectTransfer(tr.id)} className="flex-1 px-4 py-2 bg-transparent border border-border-strong text-text-primary hover:bg-bg-surface-hover rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-colors">
+                    <button onClick={() => handleRejectTransfer(tr.id)} className="flex-1 px-4 py-2 bg-transparent border border-border text-foreground hover:bg-accent rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-colors">
                       <X className="h-4 w-4" /> Reject
                     </button>
                   </div>
@@ -439,9 +454,9 @@ export default function AllocationTransferPage() {
 
         {/* --- TAB 3: RETURNS --- */}
         {activeTab === 'returns' && (
-          <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden">
+          <div className="overflow-hidden animate-in fade-in zoom-in-95 duration-300">
             <table className="w-full text-[13px] text-left">
-              <thead className="text-[11px] text-text-muted uppercase tracking-wider bg-bg-surface-alt border-b border-border-base">
+              <thead className="text-[11px] text-muted uppercase tracking-wider bg-muted border-b border-border">
                 <tr>
                   <th className="px-6 py-4 font-semibold">Asset</th>
                   <th className="px-6 py-4 font-semibold">Current Owner</th>
@@ -450,43 +465,43 @@ export default function AllocationTransferPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-base">
-                {assets.filter(a => a.status === 'Allocated').map(asset => {
-                  const overdue = isOverdue(asset.expectedReturnDate);
+                {assets.filter(a => a.status === 'allocated').map(asset => {
+                  const overdue = isOverdue(activeAllocations.find(a => a.asset_id === asset.id)?.expected_return_date);
                   return (
-                    <tr key={asset.assetId} className="hover:bg-bg-surface-hover transition-colors">
+                    <tr key={asset.id} className="hover:bg-accent transition-colors">
                       <td className="px-6 py-4">
-                        <span className="font-mono text-text-primary font-semibold">{asset.assetId}</span>
-                        <span className="block text-[12px] text-text-secondary mt-0.5">{asset.name}</span>
+                        <span className="font-mono text-foreground font-semibold">{asset.id}</span>
+                        <span className="block text-[12px] text-muted-foreground mt-0.5">{asset.name}</span>
                       </td>
-                      <td className="px-6 py-4 text-text-primary">
-                        {asset.currentOwner?.name}
-                        <span className="block text-[11px] text-text-muted mt-0.5">{asset.currentOwner?.department}</span>
+                      <td className="px-6 py-4 text-foreground">
+                        {activeAllocations.find(a => a.asset_id === asset.id)?.user_name}
+                        <span className="block text-[11px] text-muted mt-0.5">{activeAllocations.find(a => a.asset_id === asset.id)?.department_name}</span>
                       </td>
                       <td className="px-6 py-4">
-                        {asset.expectedReturnDate ? (
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border ${overdue ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50' : 'bg-bg-surface-alt text-text-secondary border-border-strong'}`}>
+                        {activeAllocations.find(a => a.asset_id === asset.id)?.expected_return_date ? (
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border ${overdue ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50' : 'bg-muted text-muted-foreground border-border'}`}>
                             <CalendarClock className="h-3 w-3" />
-                            {asset.expectedReturnDate}
+                            {activeAllocations.find(a => a.asset_id === asset.id)?.expected_return_date}
                             {overdue && " (Overdue)"}
                           </span>
                         ) : (
-                          <span className="text-text-muted italic">Not set</span>
+                          <span className="text-muted italic">Not set</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button 
                           onClick={() => { setAssetToReturn(asset); setIsReturnModalOpen(true); }}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-bg-base border border-border-strong hover:bg-bg-surface-alt hover:border-border-focus rounded-lg text-[12px] font-medium text-text-primary transition-colors"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-background border border-border hover:bg-muted hover:border-primary rounded-lg text-[12px] font-medium text-foreground transition-colors"
                         >
-                          <CornerDownLeft className="h-3.5 w-3.5 text-text-secondary" /> Process Return
+                          <CornerDownLeft className="h-3.5 w-3.5 text-muted-foreground" /> Process Return
                         </button>
                       </td>
                     </tr>
                   );
                 })}
-                {assets.filter(a => a.status === 'Allocated').length === 0 && (
+                {assets.filter(a => a.status === 'allocated').length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-16 text-center text-text-muted text-sm">
+                    <td colSpan={4} className="px-6 py-16 text-center text-muted text-sm">
                       No assets are currently allocated.
                     </td>
                   </tr>
@@ -495,7 +510,9 @@ export default function AllocationTransferPage() {
             </table>
           </div>
         )}
-      </div>
+            </div>
+          )}
+        </div>
 
       <AnimatePresence>
         {isReturnModalOpen && (

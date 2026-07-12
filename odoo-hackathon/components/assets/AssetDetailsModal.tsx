@@ -57,7 +57,7 @@ export const AssetDetailsModal: React.FC<AssetDetailsModalProps> = ({ isOpen, as
   if (!isOpen || !asset) return null;
 
   // Combine and sort history
-  const combinedHistory = [];
+  const combinedHistory: any[] = [];
   if (historyData) {
     historyData.allocations.forEach(a => {
       combinedHistory.push({
