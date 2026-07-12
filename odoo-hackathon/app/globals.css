@@ -75,6 +75,27 @@
   --color-border: var(--border);
   --color-muted: var(--muted);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-alt: var(--bg-surface-alt);
+  --color-bg-surface-hover: var(--bg-surface-hover);
+
+  --color-border-base: var(--border-base);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-bg-inverted: var(--bg-inverted);
+  --color-text-inverted: var(--text-inverted);
+
+  --color-accent-base: var(--accent-base);
+  --color-accent-hover: var(--accent-hover);
+  --color-danger-base: var(--danger-base);
+  --color-danger-hover: var(--danger-hover);
 }
 
 body {
@@ -87,7 +108,7 @@ body {
 /* Smooth theme-aware scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: var(--border-base) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -99,6 +120,6 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--border);
+  background-color: var(--border-base);
   border-radius: 99px;
 }

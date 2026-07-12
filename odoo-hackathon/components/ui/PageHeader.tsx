@@ -1,44 +1,44 @@
-'use client';
+"use client";
 
+import React from 'react';
 import { motion } from 'framer-motion';
-import { itemVariants } from './motionVariants';
 
 interface PageHeaderProps {
   title: string;
-  subtitle?: string;
-  statusDot?: boolean;
+  subtitle: string;
   children?: React.ReactNode;
 }
 
-export default function PageHeader({ title, subtitle, statusDot = false, children }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, children }: PageHeaderProps) {
   return (
-    <motion.div
-      variants={itemVariants}
-      className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10"
-    >
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <div>
-        {statusDot && (
-          <div className="flex items-center gap-2 mb-3">
-            <div className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
-            </div>
-            <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 uppercase tracking-[0.2em] font-semibold">
-              Systems Operational
-            </span>
-          </div>
-        )}
-        {/* Light: flat bold slate, Dark: gradient white-to-emerald */}
-        <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-cyan-100 dark:to-emerald-200">
+        <motion.h1 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-[28px] font-semibold text-text-primary tracking-tight transition-colors duration-300"
+        >
           {title}
-        </h1>
-        {subtitle && (
-          <p className="text-slate-500 dark:text-cyan-100/50 mt-2 text-sm leading-relaxed">
-            {subtitle}
-          </p>
-        )}
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-[14px] text-text-secondary mt-1 transition-colors duration-300"
+        >
+          {subtitle}
+        </motion.p>
       </div>
-      {children && <div className="flex gap-3">{children}</div>}
-    </motion.div>
+      {children && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center gap-3"
+        >
+          {children}
+        </motion.div>
+      )}
+    </div>
   );
 }

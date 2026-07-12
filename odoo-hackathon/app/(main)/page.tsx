@@ -1,53 +1,79 @@
 import { Search, Plus, Grid3X3, Box } from 'lucide-react';
 
+import React from 'react';
+import { motion } from 'framer-motion';
+import { containerVariants, itemVariants } from '@/components/ui/motionVariants';
+
+import { StatsCardGrid } from '@/components/ui/StatsCardGrid';
+import { AlertBanner } from '@/components/ui/AlertBanner';
+import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
+import { ActivityFeed } from '@/components/ui/ActivityFeed';
+import { OverdueReturns } from '@/components/ui/OverdueReturns';
+
 export default function Dashboard() {
   return (
-    <div className="max-w-6xl mx-auto h-full flex flex-col pt-4">
-      {/* Header Area */}
-      <div className="flex justify-between items-center mb-24">
-        <h1 className="text-3xl font-medium text-foreground tracking-tight">Assets</h1>
+    <div className="relative min-h-screen bg-bg-base text-text-primary p-6 md:p-10 font-sans transition-colors duration-300">
+      <div
+        className="max-w-[1400px] mx-auto flex flex-col gap-8 animate-in fade-in duration-500"
         
-        <div className="flex items-center gap-4">
-          {/* Segmented Control */}
-          <div className="flex items-center bg-background border border-border rounded-full p-0.5 shadow-sm text-sm font-medium">
-            <button className="px-4 py-1.5 rounded-full bg-surface-hover text-foreground">
-              By you
-            </button>
-            <button className="px-4 py-1.5 rounded-full text-muted hover:text-foreground hover:bg-surface-hover/50 transition-colors">
-              Recents
-            </button>
-            <button className="px-4 py-1.5 rounded-full text-muted hover:text-foreground hover:bg-surface-hover/50 transition-colors">
-              By others
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 text-muted">
-             <button className="p-1.5 hover:bg-surface-hover hover:text-foreground rounded transition-colors">
-                <Grid3X3 className="h-5 w-5" />
-             </button>
-             <button className="p-1.5 hover:bg-surface-hover hover:text-foreground rounded transition-colors">
-                <Plus className="h-5 w-5" />
-             </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative w-64">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-muted" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search for an asset"
-              className="block w-full pl-9 pr-3 py-1.5 border border-border rounded-full bg-surface text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm shadow-sm"
-            />
-          </div>
+        
+        
+      >
+        {/* Urgent Alerts Section */}
+        <div  className="w-full">
+          <AlertBanner />
         </div>
-      </div>
 
-      {/* Empty State */}
-      <div className="flex-1 flex flex-col items-center justify-center -mt-32">
-        <div className="relative mb-6">
-           <Box className="w-24 h-24 text-muted/40 stroke-[1.5]" />
+        {/* Header & Quick Actions */}
+        <header
+          
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-base/50"
+        >
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+              Dashboard
+            </h1>
+            <p className="text-sm text-text-secondary">
+              Welcome back. Here's what's happening today.
+            </p>
+          </div>
+
+          {/* Keeps buttons nicely aligned to the right/bottom on desktop */}
+          <div className="shrink-0">
+            <ActionButtonGroup />
+          </div>
+        </header>
+
+        {/* Top level KPIs */}
+        <section  className="w-full">
+          <StatsCardGrid />
+        </section>
+
+        {/* Main Content Split - Note the 'items-start' to allow sticky positioning */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+          {/* Left Column: Activity Feed (Main Data) */}
+          <main  className="lg:col-span-2">
+            <ActivityFeed />
+          </main>
+
+          {/* Right Column: Context & Secondary Info (Sticky for UX) */}
+          <aside
+            
+            className="flex flex-col gap-6 sticky top-10"
+          >
+            <OverdueReturns />
+
+            {/* Enhanced Placeholder: Added subtle UI elements to make it feel less "empty" */}
+            <div className="bg-bg-surface border border-border-base rounded-3xl p-8 min-h-[280px] flex flex-col items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md">
+              <div className="w-12 h-12 mb-4 rounded-full bg-border-base flex items-center justify-center animate-pulse opacity-50" />
+              <p className="text-sm text-text-secondary font-medium text-center">
+                Maintenance Schedule
+              </p>
+              <span className="text-xs opacity-70 mt-1">Coming soon...</span>
+            </div>
+          </aside>
+
         </div>
         
         <p className="text-muted text-sm mb-6">
