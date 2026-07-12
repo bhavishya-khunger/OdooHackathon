@@ -11,6 +11,7 @@ Features include:
 - **Maintenance**: Multi-stage maintenance approval workflow.
 - **Department Management**: Hierarchical department structure.
 - **Asset Categories**: Dynamic fields for asset categories.
+- **Audit Cycles**: Robust discrepancy generation and asset tracking logic.
 
 ---
 
@@ -146,3 +147,22 @@ Features include:
   * **Summary**: Start work on an assigned maintenance request (Status -> `in_progress`).
 * **POST** `/maintenance/{request_id}/resolve`
   * **Summary**: Resolve request and save notes. Reverts Asset status to `available`.
+
+---
+
+## 📋 Audit Cycles (B6 & B7)
+
+* **POST** `/audits`
+  * **Summary**: Create a new audit cycle (Admin only).
+* **GET** `/audits`
+  * **Summary**: List all audit cycles.
+* **POST** `/audits/{cycle_id}/assign`
+  * **Summary**: Assign auditors to a cycle.
+* **POST** `/audits/{cycle_id}/results`
+  * **Summary**: Log an asset's result (`verified`, `missing`, `damaged`).
+* **GET** `/audits/{cycle_id}/results`
+  * **Summary**: List results logged for an audit cycle.
+* **POST** `/audits/{cycle_id}/close`
+  * **Summary**: Close the audit cycle. Unscanned assets are marked as `missing` and their DB status changes to `lost`. Returns a discrepancy report.
+* **GET** `/audits/{cycle_id}/report`
+  * **Summary**: View the discrepancy report for a closed cycle.
