@@ -5,24 +5,24 @@
 
 :root {
   /* ── Light theme tokens ─────────────────────────── */
-  --bg:         #F8FAFC;
-  --surface:    #FFFFFF;
-  --surface-2:  #F1F5F9;
-  --border:     #E2E8F0;
-  --fg:         #0F172A;
-  --fg-muted:   #64748B;
-  --accent:     #0891B2;
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --border: #E2E8F0;
+  --fg: #0F172A;
+  --fg-muted: #64748B;
+  --accent: #0891B2;
 }
 
 .dark {
   /* ── Dark theme tokens ──────────────────────────── */
-  --bg:         #010810;
-  --surface:    #051324;
-  --surface-2:  #0A1E3F;
-  --border:     rgba(8, 145, 178, 0.25);
-  --fg:         #E2F0FF;
-  --fg-muted:   rgba(186, 230, 253, 0.45);
-  --accent:     #06B6D4;
+  --bg: #010810;
+  --surface: #051324;
+  --surface-2: #0A1E3F;
+  --border: rgba(8, 145, 178, 0.25);
+  --fg: #E2F0FF;
+  --fg-muted: rgba(186, 230, 253, 0.45);
+  --accent: #06B6D4;
 }
 
 @theme inline {
@@ -41,8 +41,15 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
-*::-webkit-scrollbar { width: 5px; }
-*::-webkit-scrollbar-track { background: transparent; }
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 *::-webkit-scrollbar-thumb {
   background-color: var(--border);
   border-radius: 99px;
