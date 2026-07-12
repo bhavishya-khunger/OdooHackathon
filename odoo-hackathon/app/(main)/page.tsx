@@ -12,62 +12,69 @@ import { OverdueReturns } from '@/components/ui/OverdueReturns';
 
 export default function Dashboard() {
   return (
-    <div className="relative min-h-full bg-bg-base text-text-primary p-10 font-sans transition-colors duration-300">
+    <div className="relative min-h-screen bg-bg-base text-text-primary p-6 md:p-10 font-sans transition-colors duration-300">
       <motion.div
-        className="max-w-[1400px] mx-auto"
+        className="max-w-[1400px] mx-auto flex flex-col gap-8"
         variants={containerVariants}
         initial="hidden"
         animate="show"
       >
         {/* Urgent Alerts Section */}
-        <div className="mb-8">
+        <motion.div variants={itemVariants} className="w-full">
           <AlertBanner />
-        </div>
+        </motion.div>
 
         {/* Header & Quick Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
-          <div>
-            <motion.h1 
-              variants={itemVariants}
-              className="text-[28px] font-semibold tracking-tight text-text-primary"
-            >
+        <motion.header
+          variants={itemVariants}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-base/50"
+        >
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight text-text-primary">
               Dashboard
-            </motion.h1>
-            <motion.p 
-              variants={itemVariants}
-              className="text-[14px] text-text-secondary mt-1"
-            >
+            </h1>
+            <p className="text-sm text-text-secondary">
               Welcome back. Here's what's happening today.
-            </motion.p>
+            </p>
           </div>
-          
-          <ActionButtonGroup />
-        </div>
+
+          {/* Keeps buttons nicely aligned to the right/bottom on desktop */}
+          <div className="shrink-0">
+            <ActionButtonGroup />
+          </div>
+        </motion.header>
 
         {/* Top level KPIs */}
-        <div className="mb-10">
+        <motion.section variants={itemVariants} className="w-full">
           <StatsCardGrid />
-        </div>
+        </motion.section>
 
-        {/* Main Content Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Left Column: Activity Feed */}
-          <div className="lg:col-span-2">
+        {/* Main Content Split - Note the 'items-start' to allow sticky positioning */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+          {/* Left Column: Activity Feed (Main Data) */}
+          <motion.main variants={itemVariants} className="lg:col-span-2">
             <ActivityFeed />
-          </div>
+          </motion.main>
 
-          {/* Right Column: Placeholders for charts/visualizations */}
-          <motion.div variants={itemVariants} className="flex flex-col gap-6">
+          {/* Right Column: Context & Secondary Info (Sticky for UX) */}
+          <motion.aside
+            variants={itemVariants}
+            className="flex flex-col gap-6 sticky top-10"
+          >
             <OverdueReturns />
-            <div className="bg-bg-surface border border-border-base rounded-3xl p-6 min-h-[250px] flex items-center justify-center transition-colors duration-300">
-              <p className="text-[14px] text-text-secondary font-medium text-center">
-                Maintenance Schedule<br /><span className="text-[12px] opacity-70">Coming soon...</span>
-              </p>
-            </div>
-          </motion.div>
-        </div>
 
+            {/* Enhanced Placeholder: Added subtle UI elements to make it feel less "empty" */}
+            <div className="bg-bg-surface border border-border-base rounded-3xl p-8 min-h-[280px] flex flex-col items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md">
+              <div className="w-12 h-12 mb-4 rounded-full bg-border-base flex items-center justify-center animate-pulse opacity-50" />
+              <p className="text-sm text-text-secondary font-medium text-center">
+                Maintenance Schedule
+              </p>
+              <span className="text-xs opacity-70 mt-1">Coming soon...</span>
+            </div>
+          </motion.aside>
+
+        </div>
       </motion.div>
     </div>
   );
