@@ -1,13 +1,15 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel, model_validator
 
 
-# ── Allocation Schemas ──────────────────────────────────────────────
+# ── Allocation Create ───────────────────────────────────────────────
 
 
 class AllocationCreate(BaseModel):
     """Request body for creating a new allocation."""
+
     asset_id: int
     user_id: Optional[int] = None
     department_id: Optional[int] = None
@@ -25,8 +27,19 @@ class AllocationCreate(BaseModel):
         return self
 
 
+# ── Allocation Return ───────────────────────────────────────────────
+
+
+class AllocationReturnRequest(BaseModel):
+    """Request body for returning an allocated asset."""
+
+    condition_notes: Optional[str] = None
+
+
+# ── Responses ───────────────────────────────────────────────────────
+
+
 class AllocationResponse(BaseModel):
-    """Response body for a single allocation."""
     id: int
     asset_id: int
     asset_tag: str
@@ -45,6 +58,7 @@ class AllocationResponse(BaseModel):
 
 class AllocationConflictDetail(BaseModel):
     """409 response body when an asset cannot be allocated."""
+
     error: str
     held_by: str
     allocation_id: Optional[int] = None
@@ -52,8 +66,12 @@ class AllocationConflictDetail(BaseModel):
 
 
 class AllocationListResponse(BaseModel):
-    """Paginated list of allocations."""
     items: List[AllocationResponse]
     total: int
     skip: int
     limit: int
+
+
+class OverdueFlagResponse(BaseModel):
+    flagged_count: int
+    message: str
