@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from db import init_db
+from routes.allocations import router as allocations_router
 
 app = FastAPI(title="AssetFlow ERP API", version="1.0.0")
+
+# ── Register routers ───────────────────────────────────────────────
+app.include_router(allocations_router)
 
 @app.on_event("startup")
 def on_startup():
