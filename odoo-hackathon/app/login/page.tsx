@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, ArrowRight, Building2 } from 'lucide-react';
 import Link from 'next/link';
+import { apiFetch, ApiError } from '@/lib/api';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 type Mode = 'login' | 'register' | 'forgot';
 
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +50,33 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    // Simulate network request
-    setTimeout(() => {
-      router.push('/');
-    }, 800);
+    const performAuth = async () => {
+      try {
+        if (mode === 'register') {
+          await apiFetch('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify({ name, email, password }),
+          });
+        }
+        
+        // After register (or if login), we login to get the cookie
+        await apiFetch('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+
+        await refreshUser(); // This will trigger the redirect in AuthProvider
+      } catch (err: any) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred. Please try again.');
+        }
+        setIsLoading(false);
+      }
+    };
+
+    performAuth();
   };
 
   return (

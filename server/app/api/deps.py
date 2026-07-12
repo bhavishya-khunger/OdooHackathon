@@ -39,7 +39,7 @@ def require_roles(*allowed_roles: str) -> Callable:
         request: Request,
         current_user: User = Depends(get_current_user),
     ) -> User:
-        role = getattr(request.state, "role", current_user.role)
+        role = current_user.role
         if role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

@@ -10,6 +10,9 @@ from app.core.security import decode_access_token
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.method == "OPTIONS":
+            return await call_next(request)
+            
         path = request.url.path
 
         if path in settings.PUBLIC_PATHS or path.startswith(settings.PUBLIC_PREFIXES):

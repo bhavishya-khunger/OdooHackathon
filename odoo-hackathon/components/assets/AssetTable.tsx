@@ -1,35 +1,36 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Edit2, Trash2, Box, Info } from 'lucide-react';
 
 export interface AssetHistory {
-  type: 'Allocation' | 'Maintenance';
+  id: number;
   date: string;
-  description: string;
-  user?: string;
+  action: string;
 }
 
-export interface Asset {
-  id: string;
-  tag: string;
+export interface AssetResponse {
+  id: number;
   name: string;
-  category: string;
-  status: string;
+  category_id: number;
+  category_name?: string;
+  tag: string;
+  serial_number: string;
+  acquisition_date: string;
+  acquisition_cost: number;
+  condition: string;
   location: string;
-  serialNumber?: string;
-  acquisitionDate?: string;
-  acquisitionCost?: string;
-  condition?: string;
-  department?: string;
-  shared?: boolean;
-  history?: AssetHistory[];
+  photo_url?: string;
+  is_shared: boolean;
+  status: string;
+  department_id?: number;
+  department_name?: string;
+  created_at: string;
 }
 
 interface AssetTableProps {
-  assets: Asset[];
-  onEdit: (asset: Asset) => void;
-  onDelete: (asset: Asset) => void;
-  onViewDetails?: (asset: Asset) => void;
+  assets: AssetResponse[];
+  onEdit: (asset: AssetResponse) => void;
+  onDelete: (asset: AssetResponse) => void;
+  onViewDetails?: (asset: AssetResponse) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -44,7 +45,7 @@ const getStatusBadge = (status: string) => {
   } else if (s === 'available') {
     bgColor = 'bg-[#dcfce7] text-[#16a34a] border-[#bbf7d0] dark:bg-[#10301a] dark:text-[#4ade80] dark:border-[#1a4d29]';
     dotColor = 'bg-[#16a34a] dark:bg-[#4ade80]';
-  } else if (s === 'maintenance' || s === 'under maintenance') {
+  } else if (s === 'under_maintenance' || s === 'maintenance') {
     bgColor = 'bg-[#fef3c7] text-[#d97706] border-[#fde68a] dark:bg-[#3d250c] dark:text-[#fbbf24] dark:border-[#663d14]';
     dotColor = 'bg-[#d97706] dark:bg-[#fbbf24]';
   } else if (s === 'reserved') {
@@ -58,81 +59,79 @@ const getStatusBadge = (status: string) => {
     dotColor = 'bg-gray-500 dark:bg-gray-400';
   }
 
+  const displayStatus = s.replace('_', ' ');
+
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border transition-colors duration-300 ${bgColor}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border transition-colors duration-300 ${bgColor} capitalize`}>
       <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${dotColor}`} />
-      {status}
+      {displayStatus}
     </span>
   );
 };
 
 export const AssetTable: React.FC<AssetTableProps> = ({ assets, onEdit, onDelete, onViewDetails }) => {
   return (
-    <div className="overflow-x-auto bg-bg-surface border border-border-base rounded-3xl transition-colors duration-300">
-      <table className="w-full text-[13px] text-left">
-        <thead className="text-[11px] text-text-muted uppercase tracking-wider bg-bg-surface-alt border-b border-border-base transition-colors duration-300">
-          <tr>
-            <th className="px-6 py-4 font-semibold">Tag</th>
-            <th className="px-6 py-4 font-semibold">Name</th>
-            <th className="px-6 py-4 font-semibold">Category</th>
-            <th className="px-6 py-4 font-semibold">Status</th>
-            <th className="px-6 py-4 font-semibold">Location</th>
-            <th className="px-6 py-4 font-semibold text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border-base transition-colors duration-300">
-          {assets.map((asset, i) => (
-            <motion.tr
+    <table className="w-full text-sm text-left">
+      <thead className="text-[10px] text-muted uppercase tracking-[0.15em] bg-background/80 border-b border-border">
+        <tr>
+          <th className="px-6 py-4 font-semibold">Tag</th>
+          <th className="px-6 py-4 font-semibold">Name</th>
+          <th className="px-6 py-4 font-semibold">Category</th>
+          <th className="px-6 py-4 font-semibold">Status</th>
+          <th className="px-6 py-4 font-semibold">Location</th>
+          <th className="px-6 py-4 font-semibold text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border">
+          {assets.map((asset) => (
+            <tr
               key={asset.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.25 }}
-              className="hover:bg-bg-surface-hover transition-colors group"
+              className="hover:bg-surface-hover transition-colors group animate-in fade-in duration-300"
             >
               <td className="px-6 py-4">
-                <span className="font-mono text-text-primary font-semibold transition-colors duration-300">{asset.tag}</span>
+                <span className="font-mono text-foreground font-semibold">{asset.tag}</span>
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center shrink-0 transition-colors duration-300">
-                    <Box className="h-4 w-4 text-text-secondary transition-colors duration-300" />
+                  <div className="w-9 h-9 rounded-xl bg-background border border-border flex items-center justify-center shrink-0">
+                    <Box className="h-4 w-4 text-muted" />
                   </div>
-                  <span className="font-semibold text-text-primary transition-colors duration-300">{asset.name}</span>
+                  <span className="font-semibold text-foreground">{asset.name}</span>
                 </div>
               </td>
-              <td className="px-6 py-4 text-text-secondary capitalize transition-colors duration-300">
-                {asset.category}
+              <td className="px-6 py-4 text-muted capitalize">
+                {asset.category_name || 'N/A'}
               </td>
               <td className="px-6 py-4">
                 {getStatusBadge(asset.status)}
               </td>
-              <td className="px-6 py-4 text-text-secondary capitalize transition-colors duration-300">
+              <td className="px-6 py-4 text-muted capitalize">
                 {asset.location}
               </td>
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button 
                     onClick={() => onViewDetails?.(asset)}
-                    className="text-text-secondary hover:text-text-primary p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
+                    className="text-muted hover:text-foreground p-1.5 rounded-lg hover:bg-surface-hover transition-colors"
                     title="View Details & History"
                   >
                     <Info className="h-4 w-4" />
                   </button>
                   <button 
                     onClick={() => onEdit(asset)}
-                    className="text-text-secondary hover:text-text-primary p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
+                    className="text-muted hover:text-foreground p-1.5 rounded-lg hover:bg-surface-hover transition-colors"
                   >
                     <Edit2 className="h-4 w-4" />
                   </button>
                   <button 
                     onClick={() => onDelete(asset)}
-                    className="text-text-secondary hover:text-danger-base p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
+                    className="text-muted hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </td>
-            </motion.tr>
+            </tr>
           ))}
           {assets.length === 0 && (
             <tr>
@@ -142,7 +141,6 @@ export const AssetTable: React.FC<AssetTableProps> = ({ assets, onEdit, onDelete
             </tr>
           )}
         </tbody>
-      </table>
-    </div>
+    </table>
   );
 };

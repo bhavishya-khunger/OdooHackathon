@@ -6,9 +6,10 @@ import { useState } from 'react';
 import {
   LayoutDashboard, Settings, Box, ArrowRightLeft,
   Calendar, Wrench, ClipboardCheck, BarChart3, Bell, Search,
-  Sun, Moon
+  Sun, Moon, LogOut
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { useAuth } from './providers/AuthProvider';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -24,6 +25,13 @@ const navItems = [
 export default function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean, setIsCollapsed: (val: boolean) => void }) {
   const pathname = usePathname();
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const { user, logout } = useAuth();
+  
+  const getInitials = (name?: string) => {
+    if (!name) return 'UN';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  };
 
   return (
     <div className={`${isCollapsed ? 'w-[80px]' : 'w-[260px]'} bg-sidebar-bg h-screen flex flex-col fixed left-0 top-0 z-20 transition-all duration-300 border-r border-border/50`}>
@@ -123,21 +131,44 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: 
         </div>
 
         {/* User Profile */}
-        <button className={`flex items-center gap-3 py-2 rounded-full border border-border hover:bg-surface-hover transition-colors text-left ${isCollapsed ? 'px-2 justify-center border-transparent hover:border-border' : 'px-3 w-full'}`}>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-            JD
-          </div>
-          {!isCollapsed && (
-            <>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground truncate">johndoe@example.com</p>
+        <div className="relative w-full">
+          {showProfileMenu && (
+            <div className={`absolute bottom-full mb-2 bg-surface border border-border shadow-xl rounded-xl w-48 overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 ${isCollapsed ? 'left-14' : 'left-0'}`}>
+              <div className="p-3 border-b border-border">
+                <p className="text-sm font-semibold text-foreground truncate">{user?.name || 'User'}</p>
+                <p className="text-xs text-muted truncate">{user?.email}</p>
               </div>
-              <div className="text-[10px] font-medium text-muted bg-background border border-border px-1.5 py-0.5 rounded shrink-0">
-                PRO
+              <div className="p-1.5">
+                <button
+                  onClick={() => { setShowProfileMenu(false); logout(); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </button>
               </div>
-            </>
+            </div>
           )}
-        </button>
+
+          <button 
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            className={`flex items-center gap-3 py-2 rounded-full border border-border hover:bg-surface-hover transition-colors text-left ${isCollapsed ? 'px-2 justify-center border-transparent hover:border-border' : 'px-3 w-full'}`}
+          >
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+              {getInitials(user?.name)}
+            </div>
+            {!isCollapsed && (
+              <>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground truncate">{user?.email || 'Loading...'}</p>
+                </div>
+                <div className="text-[10px] font-medium text-muted bg-background border border-border px-1.5 py-0.5 rounded shrink-0 uppercase">
+                  {user?.role === 'admin' ? 'ADM' : 'PRO'}
+                </div>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
