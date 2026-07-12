@@ -36,7 +36,7 @@ def seed_data():
         users_data = [
             {
                 "name": "Admin User",
-                "email": "admin@example.com",
+                "email": "admin@odoo.com",
                 "password_hash": hash_password("admin123"),
                 "role": "admin",
                 "department_id": departments["IT Department"].id,
@@ -44,7 +44,7 @@ def seed_data():
             },
             {
                 "name": "Manager User",
-                "email": "manager@example.com",
+                "email": "manager@odoo.com",
                 "password_hash": hash_password("manager123"),
                 "role": "manager",
                 "department_id": departments["Operations"].id,
@@ -52,7 +52,7 @@ def seed_data():
             },
             {
                 "name": "Employee User",
-                "email": "employee@example.com",
+                "email": "employee@odoo.com",
                 "password_hash": hash_password("employee123"),
                 "role": "employee",
                 "department_id": departments["IT Department"].id,
@@ -60,7 +60,7 @@ def seed_data():
             },
             {
                 "name": "Auditor User",
-                "email": "auditor@example.com",
+                "email": "auditor@odoo.com",
                 "password_hash": hash_password("auditor123"),
                 "role": "auditor",
                 "department_id": departments["Human Resources"].id,
@@ -68,7 +68,7 @@ def seed_data():
             },
             {
                 "name": "Inactive User",
-                "email": "inactive@example.com",
+                "email": "inactive@odoo.com",
                 "password_hash": hash_password("inactive123"),
                 "role": "employee",
                 "department_id": departments["Human Resources"].id,
