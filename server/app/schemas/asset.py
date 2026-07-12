@@ -50,3 +50,40 @@ class AssetResponse(BaseModel):
     department_id: Optional[int] = None
     department_name: Optional[str] = None
     created_at: datetime
+
+
+class AllocationHistoryItem(BaseModel):
+    id: int
+    user_id: Optional[int] = None
+    user_name: Optional[str] = None
+    department_id: Optional[int] = None
+    department_name: Optional[str] = None
+    allocated_by: int
+    allocated_by_name: Optional[str] = None
+    expected_return_date: Optional[datetime] = None
+    actual_return_date: Optional[datetime] = None
+    status: str
+    notes: Optional[str] = None
+    created_at: datetime
+
+
+class MaintenanceHistoryItem(BaseModel):
+    id: int
+    requested_by: int
+    requested_by_name: Optional[str] = None
+    description: str
+    priority: str
+    approved_by: Optional[int] = None
+    approved_by_name: Optional[str] = None
+    assigned_technician_id: Optional[int] = None
+    assigned_technician_name: Optional[str] = None
+    status: str
+    resolution_notes: Optional[str] = None
+    created_at: datetime
+
+
+class AssetHistoryResponse(BaseModel):
+    asset_id: int
+    asset_tag: str
+    allocations: list[AllocationHistoryItem]
+    maintenance_requests: list[MaintenanceHistoryItem]

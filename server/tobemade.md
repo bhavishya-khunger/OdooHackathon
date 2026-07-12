@@ -40,7 +40,7 @@ The backend server is split into 14 distinct tasks, divided equally (7 tasks eac
 - **Rule**: Auto-generate unique sequential asset tags (e.g., `AF-0001`, `AF-0002`).
 - Track asset lifecycle transitions (`available`, `allocated`, `reserved`, `under_maintenance`, `lost`, `retired`, `disposed`).
 
-### Task A6: Asset Search, Filtering & Audit Trail API
+### Task A6: Asset Search, Filtering & Audit Trail API (done)
 - Implement multi-parameter search/filters for assets (by tag, serial number, status, category, department, location).
 - Implement per-asset history endpoints returning past allocations and maintenance actions.
 
