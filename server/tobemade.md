@@ -31,11 +31,11 @@ The backend server is split into 14 distinct tasks, divided equally (7 tasks eac
 - Implement endpoints to create/edit/deactivate Departments (supporting hierarchy with parent departments and head assignment).
 - Implement Category CRUD handling dynamic category-specific fields (JSON model).
 
-### Task A4: Employee Directory & Promotion API
+### Task A4: Employee Directory & Promotion API (done)
 - Implement search/filter endpoints for the Employee Directory.
 - Implement Admin-only endpoints to promote/demote employees to Department Head or Asset Manager.
 
-### Task A5: Asset Registration & Lifecycle API
+### Task A5: Asset Registration & Lifecycle API (done)
 - Implement Asset Registration endpoint.
 - **Rule**: Auto-generate unique sequential asset tags (e.g., `AF-0001`, `AF-0002`).
 - Track asset lifecycle transitions (`available`, `allocated`, `reserved`, `under_maintenance`, `lost`, `retired`, `disposed`).
