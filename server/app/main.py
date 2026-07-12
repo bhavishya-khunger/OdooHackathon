@@ -8,7 +8,35 @@ from app.database import init_db
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.APP_TITLE, version=settings.APP_VERSION)
+    description = """
+    **AssetFlow ERP API**
+    
+    A comprehensive API for managing company assets, departments, users, and allocations.
+    Features include:
+    - **Authentication**: JWT cookie-based role-based access.
+    - **Asset Allocation**: Allocate assets, handle returns, and flag overdue allocations.
+    - **Transfer Requests**: Request, approve, or reject asset transfers.
+    - **Department Management**: Hierarchical department structure.
+    - **Asset Categories**: Dynamic fields for asset categories.
+    """
+
+    tags_metadata = [
+        {"name": "auth", "description": "Operations with users and authentication. Registration and Login."},
+        {"name": "allocations", "description": "Manage asset allocations, returns, and overdue flagging."},
+        {"name": "transfers", "description": "Manage asset transfer requests between users or departments."},
+        {"name": "bookings", "description": "Overlap-free booking of shared resources."},
+        {"name": "maintenance", "description": "Multi-stage maintenance approval workflow."},
+        {"name": "audits", "description": "Audit cycle management and discrepancy reporting."},
+        {"name": "departments", "description": "Manage organizational hierarchy and departments."},
+        {"name": "categories", "description": "Manage asset categories with dynamic field definitions."},
+    ]
+
+    app = FastAPI(
+        title=settings.APP_TITLE,
+        version=settings.APP_VERSION,
+        description=description,
+        openapi_tags=tags_metadata,
+    )
 
     app.add_middleware(
         CORSMiddleware,
