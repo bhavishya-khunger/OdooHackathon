@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.routes import (
     allocations,
     assets,
+    audits,
     auth,
     bookings,
     categories,
@@ -10,7 +11,8 @@ from app.api.routes import (
     employees,
     maintenance,
     transfers,
-), notifications
+    notifications
+)
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
@@ -22,5 +24,5 @@ api_router.include_router(allocations.router)
 api_router.include_router(transfers.router)
 api_router.include_router(bookings.router)
 api_router.include_router(maintenance.router)
-
+api_router.include_router(audits.router)
 api_router.include_router(notifications.router)
