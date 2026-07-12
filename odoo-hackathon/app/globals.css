@@ -4,36 +4,75 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* ── Light theme tokens ─────────────────────────── */
-  --bg:         #F8FAFC;
-  --surface:    #FFFFFF;
-  --surface-2:  #F1F5F9;
-  --border:     #E2E8F0;
-  --fg:         #0F172A;
-  --fg-muted:   #64748B;
-  --accent:     #0891B2;
+  /* Light mode - Google AI Studio */
+  --background: #FFFFFF;
+  --sidebar-bg: #F8F9FA;
+  --foreground: #1F1F1F;
+  --surface: #FFFFFF;
+  --surface-hover: #F1F3F4;
+  --border: #E3E3E3;
+  --border-strong: #C7C7C7;
+  --primary: #0B57D0;
+  --primary-hover: #0842A0;
+  --primary-tint: #D3E3FD;
+  --muted: #444746;
+  --faint: #747775;
+  
+  /* Status colors - Light */
+  --status-available-ic: #146C2E;
+  --status-available-tint: #C4EECE;
+  --status-allocated-ic: #0B57D0;
+  --status-allocated-tint: #D3E3FD;
+  --status-maintenance-ic: #B3261E;
+  --status-maintenance-tint: #F9DEDC;
+  --status-bookings-ic: #65558F;
+  --status-bookings-tint: #E8DEF8;
 }
 
 .dark {
-  /* ── Dark theme tokens ──────────────────────────── */
-  --bg:         #010810;
-  --surface:    #051324;
-  --surface-2:  #0A1E3F;
-  --border:     rgba(8, 145, 178, 0.25);
-  --fg:         #E2F0FF;
-  --fg-muted:   rgba(186, 230, 253, 0.45);
-  --accent:     #06B6D4;
+  /* Dark mode - Google AI Studio */
+  --background: #131314;
+  --sidebar-bg: #1E1F20;
+  --foreground: #E3E3E3;
+  --surface: #1E1F22;
+  --surface-hover: #282A2C;
+  --border: #444746;
+  --border-strong: #747775;
+  --primary: #A8C7FA;
+  --primary-hover: #D3E3FD;
+  --primary-tint: #004A77;
+  --muted: #C4C7C5;
+  --faint: #8E918F;
+  
+  /* Status colors - Dark */
+  --status-available-ic: #6DD58C;
+  --status-available-tint: #0F5223;
+  --status-allocated-ic: #A8C7FA;
+  --status-allocated-tint: #004A77;
+  --status-maintenance-ic: #F2B8B5;
+  --status-maintenance-tint: #8C1D18;
+  --status-bookings-ic: #D0BCFF;
+  --status-bookings-tint: #4A4458;
 }
 
 @theme inline {
+  --color-background: var(--background);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--bg);
-  color: var(--fg);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Smooth theme-aware scrollbar */
