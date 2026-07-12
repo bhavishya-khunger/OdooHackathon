@@ -24,6 +24,8 @@ def create_app() -> FastAPI:
         {"name": "auth", "description": "Operations with users and authentication. Registration and Login."},
         {"name": "allocations", "description": "Manage asset allocations, returns, and overdue flagging."},
         {"name": "transfers", "description": "Manage asset transfer requests between users or departments."},
+        {"name": "bookings", "description": "Overlap-free booking of shared resources."},
+        {"name": "maintenance", "description": "Multi-stage maintenance approval workflow."},
         {"name": "departments", "description": "Manage organizational hierarchy and departments."},
         {"name": "categories", "description": "Manage asset categories with dynamic field definitions."},
     ]
