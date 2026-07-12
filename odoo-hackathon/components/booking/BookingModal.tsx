@@ -57,77 +57,77 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }} 
-        className="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }} 
-        animate={{ opacity: 1, scale: 1, y: 0 }} 
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-sm bg-white dark:bg-[#0A1E3F] border border-slate-200 dark:border-cyan-900/50 rounded-3xl shadow-2xl overflow-hidden"
+        initial={{ opacity: 0, scale: 0.95 }} 
+        animate={{ opacity: 1, scale: 1 }} 
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="relative w-full max-w-sm bg-[#141414] border border-[#2A2A2A] rounded-2xl shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-cyan-900/30">
-          <h2 className="text-xl font-serif font-medium text-slate-900 dark:text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[#222]">
+          <h2 className="text-lg font-semibold tracking-tight text-[#f5f5f5]">
             {mode === 'add' ? 'Book a Slot' : 'Edit Booking'}
           </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[#888] hover:text-[#f5f5f5] transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
         
         <div className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-cyan-100/80 mb-2">Meeting Title *</label>
+            <label className="block text-[13px] font-medium text-[#888] mb-2">Meeting Title *</label>
             <input 
               type="text" 
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
               placeholder="e.g. Procurement Team"
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#030b14] border border-slate-200 dark:border-cyan-900/40 rounded-xl text-slate-800 dark:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+              className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] placeholder:text-[#555] focus:outline-none focus:border-[#555] transition-colors"
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-cyan-100/80 mb-2">Start Time *</label>
+              <label className="block text-[13px] font-medium text-[#888] mb-2">Start Time *</label>
               <input 
                 type="time" 
                 value={formData.startTime}
                 onChange={(e) => setFormData({...formData, startTime: e.target.value})}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#030b14] border border-slate-200 dark:border-cyan-900/40 rounded-xl text-slate-800 dark:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 appearance-none"
+                className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-cyan-100/80 mb-2">End Time *</label>
+              <label className="block text-[13px] font-medium text-[#888] mb-2">End Time *</label>
               <input 
                 type="time" 
                 value={formData.endTime}
                 onChange={(e) => setFormData({...formData, endTime: e.target.value})}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#030b14] border border-slate-200 dark:border-cyan-900/40 rounded-xl text-slate-800 dark:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 appearance-none"
+                className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none transition-colors"
               />
             </div>
           </div>
         </div>
         
-        <div className="p-6 border-t border-slate-100 dark:border-cyan-900/30 flex justify-end gap-3 bg-slate-50/50 dark:bg-cyan-950/10">
+        <div className="p-6 border-t border-[#222] flex justify-end gap-3 bg-[#111]">
           {mode === 'edit' && onDelete && (
             <button 
               onClick={() => onDelete(initialData!.bookingId)}
-              className="px-5 py-2.5 mr-auto text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-xl transition-colors"
+              className="px-5 py-2 mr-auto text-[13px] font-medium text-[#ff4444] hover:bg-[#2a1a1a] rounded-full transition-colors"
             >
               Cancel Booking
             </button>
           )}
           <button 
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-cyan-100/70 hover:bg-slate-100 dark:hover:bg-cyan-900/40 rounded-xl transition-colors"
+            className="px-5 py-2 text-[13px] font-medium text-[#888] hover:text-[#f5f5f5] transition-colors"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
             disabled={!formData.title || !formData.startTime || !formData.endTime}
-            className="px-5 py-2.5 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 rounded-xl shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 text-[13px] font-medium text-[#0F0F0F] bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
           </button>

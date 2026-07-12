@@ -9,24 +9,20 @@ interface TimelineProps {
   onClearConflict: () => void;
 }
 
-// Helper to convert "HH:mm" to minutes since 09:00
 const timeToMinutes = (timeStr: string) => {
   const [hours, minutes] = timeStr.split(':').map(Number);
   return (hours - 9) * 60 + minutes;
 };
 
-// We will render timeline from 09:00 to 17:00 (8 hours total)
 const TIMELINE_START_HOUR = 9;
 const TIMELINE_END_HOUR = 17;
 const TOTAL_HOURS = TIMELINE_END_HOUR - TIMELINE_START_HOUR;
 
 export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBooking, onClearConflict }) => {
-  
-  // Height of one hour in pixels
   const HOUR_HEIGHT = 80;
 
   return (
-    <div className="relative bg-white/50 dark:bg-[#030b14]/50 border border-slate-200 dark:border-cyan-900/30 rounded-3xl p-6 md:p-8 overflow-hidden shadow-inner">
+    <div className="relative bg-[#0F0F0F] border border-[#222] rounded-2xl p-6 md:p-8 overflow-hidden">
       <div className="relative" style={{ height: `${TOTAL_HOURS * HOUR_HEIGHT}px` }}>
         
         {/* Background Grid Lines */}
@@ -36,10 +32,10 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
             className="absolute w-full flex items-center gap-4"
             style={{ top: `${i * HOUR_HEIGHT}px`, transform: 'translateY(-50%)' }}
           >
-            <span className="text-xs font-mono font-medium text-slate-400 dark:text-cyan-100/30 w-12 text-right shrink-0">
+            <span className="text-[11px] font-mono font-medium text-[#666] w-12 text-right shrink-0">
               {String(TIMELINE_START_HOUR + i).padStart(2, '0')}:00
             </span>
-            <div className="flex-1 border-b border-dashed border-slate-200 dark:border-cyan-900/20"></div>
+            <div className="flex-1 border-b border-[#222]"></div>
           </div>
         ))}
 
@@ -60,19 +56,17 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
                   onClick={() => onEditBooking(booking)}
-                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 shadow-sm border group hover:shadow-md transition-shadow"
+                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-[#333] transition-colors bg-[#141414] border-[#2A2A2A]"
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)', // emerald bg
-                    borderColor: 'rgba(16, 185, 129, 0.3)'
                   }}
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500" />
-                  <h4 className="font-semibold text-emerald-800 dark:text-emerald-300 text-sm">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#f5f5f5]" />
+                  <h4 className="font-semibold text-[#f5f5f5] text-[13px]">
                     {booking.title}
                   </h4>
-                  <p className="text-xs font-mono text-emerald-600 dark:text-emerald-400/80 mt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                  <p className="text-[11px] font-mono text-[#888] mt-1 group-hover:text-[#a3a3a3] transition-colors">
                     {booking.startTime} - {booking.endTime}
                   </p>
                 </motion.div>
@@ -93,7 +87,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   initial={{ opacity: 0, scaleY: 0, originY: 0 }}
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
-                  className="absolute w-full md:w-3/4 left-0 md:left-12 rounded-xl overflow-hidden p-3 border-2 border-dashed border-red-400 dark:border-red-500/50 bg-red-50/50 dark:bg-red-950/30 backdrop-blur-sm z-10 flex flex-col justify-center items-center shadow-[0_0_20px_rgba(239,68,68,0.15)]"
+                  className="absolute w-full md:w-3/4 left-0 md:left-12 rounded-xl overflow-hidden p-3 border border-dashed border-[#ff4444] bg-[#2a1215] z-10 flex flex-col justify-center items-center"
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
@@ -101,12 +95,12 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                 >
                   <button 
                     onClick={onClearConflict}
-                    className="absolute top-2 right-2 p-1 text-red-400 hover:text-red-600 bg-red-100/50 rounded-md transition-colors"
+                    className="absolute top-2 right-2 p-1 text-[#ff4444] hover:text-[#ff8888] rounded-md transition-colors"
                   >
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
                   </button>
-                  <span className="font-bold text-red-700 dark:text-red-400 text-sm">Conflict Detected</span>
-                  <span className="text-xs text-red-600 dark:text-red-300/80 mt-1 text-center font-medium max-w-[90%] break-words">
+                  <span className="font-bold text-[#ff4444] text-[13px]">Conflict Detected</span>
+                  <span className="text-[11px] text-[#ff8888] mt-1 text-center font-medium max-w-[90%] break-words">
                     {conflict.message}
                   </span>
                 </motion.div>
