@@ -1,10 +1,25 @@
 import re
 
 from fastapi import HTTPException, status
+from sqlalchemy import func
 from sqlmodel import Session, select
 
-from app.models import Asset, AssetCategory, Department
-from app.schemas.asset import AssetCreate, AssetResponse, AssetStatusUpdate
+from app.models import (
+    Allocation,
+    Asset,
+    AssetCategory,
+    Department,
+    MaintenanceRequest,
+    User,
+)
+from app.schemas.asset import (
+    AllocationHistoryItem,
+    AssetCreate,
+    AssetHistoryResponse,
+    AssetResponse,
+    AssetStatusUpdate,
+    MaintenanceHistoryItem,
+)
 
 TAG_PREFIX = "AF"
 TAG_PATTERN = re.compile(r"^AF-(\d+)$")
@@ -54,6 +69,137 @@ class AssetService:
         self.session.commit()
         self.session.refresh(asset)
         return self.get_asset(asset.id)
+
+    def search_assets(
+        self,
+        tag: str | None = None,
+        serial_number: str | None = None,
+        status_filter: str | None = None,
+        category_id: int | None = None,
+        department_id: int | None = None,
+        location: str | None = None,
+    ) -> list[AssetResponse]:
+        query = (
+            select(Asset, AssetCategory.name, Department.name)
+            .join(AssetCategory, Asset.category_id == AssetCategory.id)
+            .outerjoin(Department, Asset.department_id == Department.id)
+        )
+
+        if tag:
+            query = query.where(func.lower(Asset.tag).like(f"%{tag.lower()}%"))
+        if serial_number:
+            query = query.where(
+                func.lower(Asset.serial_number).like(f"%{serial_number.lower()}%")
+            )
+        if status_filter:
+            query = query.where(Asset.status == status_filter)
+        if category_id is not None:
+            query = query.where(Asset.category_id == category_id)
+        if department_id is not None:
+            query = query.where(Asset.department_id == department_id)
+        if location:
+            query = query.where(
+                func.lower(Asset.location).like(f"%{location.lower()}%")
+            )
+
+        rows = self.session.exec(query.order_by(Asset.tag)).all()
+        return [
+            self._to_response(asset, category_name, department_name)
+            for asset, category_name, department_name in rows
+        ]
+
+    def get_asset_history(self, asset_id: int) -> AssetHistoryResponse:
+        asset = self.session.get(Asset, asset_id)
+        if not asset:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Asset not found",
+            )
+
+        allocations = self.session.exec(
+            select(Allocation)
+            .where(Allocation.asset_id == asset_id)
+            .order_by(Allocation.created_at.desc())
+        ).all()
+
+        maintenance_requests = self.session.exec(
+            select(MaintenanceRequest)
+            .where(MaintenanceRequest.asset_id == asset_id)
+            .order_by(MaintenanceRequest.created_at.desc())
+        ).all()
+
+        user_ids: set[int] = set()
+        dept_ids: set[int] = set()
+        for allocation in allocations:
+            if allocation.user_id:
+                user_ids.add(allocation.user_id)
+            if allocation.department_id:
+                dept_ids.add(allocation.department_id)
+            user_ids.add(allocation.allocated_by)
+        for request in maintenance_requests:
+            user_ids.add(request.requested_by)
+            if request.approved_by:
+                user_ids.add(request.approved_by)
+            if request.assigned_technician_id:
+                user_ids.add(request.assigned_technician_id)
+
+        users = {
+            user.id: user.name
+            for user in self.session.exec(
+                select(User).where(User.id.in_(user_ids))
+            ).all()
+        } if user_ids else {}
+        departments = {
+            dept.id: dept.name
+            for dept in self.session.exec(
+                select(Department).where(Department.id.in_(dept_ids))
+            ).all()
+        } if dept_ids else {}
+
+        return AssetHistoryResponse(
+            asset_id=asset.id,
+            asset_tag=asset.tag,
+            allocations=[
+                AllocationHistoryItem(
+                    id=allocation.id,
+                    user_id=allocation.user_id,
+                    user_name=users.get(allocation.user_id) if allocation.user_id else None,
+                    department_id=allocation.department_id,
+                    department_name=departments.get(allocation.department_id)
+                    if allocation.department_id
+                    else None,
+                    allocated_by=allocation.allocated_by,
+                    allocated_by_name=users.get(allocation.allocated_by),
+                    expected_return_date=allocation.expected_return_date,
+                    actual_return_date=allocation.actual_return_date,
+                    status=allocation.status,
+                    notes=allocation.notes,
+                    created_at=allocation.created_at,
+                )
+                for allocation in allocations
+            ],
+            maintenance_requests=[
+                MaintenanceHistoryItem(
+                    id=request.id,
+                    requested_by=request.requested_by,
+                    requested_by_name=users.get(request.requested_by),
+                    description=request.description,
+                    priority=request.priority,
+                    approved_by=request.approved_by,
+                    approved_by_name=users.get(request.approved_by)
+                    if request.approved_by
+                    else None,
+                    assigned_technician_id=request.assigned_technician_id,
+                    assigned_technician_name=users.get(request.assigned_technician_id)
+                    if request.assigned_technician_id
+                    else None,
+                    status=request.status,
+                    resolution_notes=request.resolution_notes,
+                    created_at=request.created_at,
+                )
+                for request in maintenance_requests
+            ],
+        )
 
     def get_asset(self, asset_id: int) -> AssetResponse:
         row = self.session.exec(

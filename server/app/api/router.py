@@ -10,7 +10,7 @@ from app.api.routes import (
     employees,
     maintenance,
     transfers,
-)
+), notifications
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
@@ -23,3 +23,4 @@ api_router.include_router(transfers.router)
 api_router.include_router(bookings.router)
 api_router.include_router(maintenance.router)
 
+api_router.include_router(notifications.router)

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.config import settings
-from app.core.middleware import AuthMiddleware
+from app.core.middleware import ActivityLoggingMiddleware, AuthMiddleware
 from app.database import init_db
 
 
@@ -45,6 +45,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.add_middleware(AuthMiddleware)
+    app.add_middleware(ActivityLoggingMiddleware)
 
     app.include_router(api_router)
 
