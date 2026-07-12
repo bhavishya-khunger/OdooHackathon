@@ -6,7 +6,7 @@ The backend server is split into 14 distinct tasks, divided equally (7 tasks eac
 
 ## Team Member A: Core Infrastructure, Auth, Directory & Assets
 
-### Task A1: Database Schema & ORM Setup
+### Task A1: Database Schema & ORM Setup (done)
 - Set up the Supabase (PostgreSQL) database.
 - Configure ORM / migration scripts for all 12 tables:
   1. `User`
@@ -22,7 +22,7 @@ The backend server is split into 14 distinct tasks, divided equally (7 tasks eac
   11. `AuditResult`
   12. `ActivityLog`
 
-### Task A2: Authentication & Role Enforcement API
+### Task A2: Authentication & Role Enforcement API (done)
 - Implement registration and login API endpoints.
 - **Rule**: Registration defaults to the `'employee'` role with zero self-elevation.
 - Implement cookie/session verification middleware for API route protection.
