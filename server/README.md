@@ -55,11 +55,51 @@ Before inserting a booking for resource $R$ at interval $[\text{start}, \text{en
 ## Getting Started
 
 1. **Initialize the Server Project**:
-   Run initialization scripts depending on the selected backend stack.
-2. **Configure Local Database**:
-   - Run migrations to configure the SQLite schema.
-   - Configure dummy seeds (a set of default Categories, Departments, and an initial Admin account).
-3. **Verify API Endpoints**:
-   Use the OpenAPI Swagger docs or write integration scripts (postman/jest/pytest) to confirm endpoints behave correctly.
+   ```bash
+   cd server
+   python -m venv venv
+   source venv/bin/activate        # Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+2. **Configure Environment**:
+   Copy `.env.example` to `.env` and set your Supabase credentials.
+
+3. **Run the Server**:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+4. **Verify API Endpoints**:
+   Use the OpenAPI Swagger docs at `/docs` or write integration tests to confirm endpoints behave correctly.
+
+---
+
+## Project Structure
+
+```
+server/
+├── app/
+│   ├── main.py              # FastAPI app factory & entry point
+│   ├── config.py            # Environment settings
+│   ├── database.py          # DB engine, session, init
+│   ├── core/
+│   │   ├── security.py      # Password hashing & JWT helpers
+│   │   └── middleware.py    # Auth session middleware
+│   ├── models/
+│   │   └── tables.py        # SQLModel table definitions
+│   ├── schemas/
+│   │   └── auth.py          # Pydantic request/response models
+│   ├── services/
+│   │   └── auth_service.py  # Auth business logic
+│   └── api/
+│       ├── deps.py          # Route dependencies (auth, roles)
+│       ├── router.py        # Aggregates all route modules
+│       └── routes/
+│           └── auth.py      # /auth endpoints
+├── main.py                  # Backward-compatible re-export
+├── requirements.txt
+└── .env.example
+```
 
 For a detailed breakdown of the task list, refer to the [tobemade.md](file:///d:/Odoo/OdooHackathon/server/tobemade.md) file.

@@ -1,0 +1,31 @@
+from app.models.tables import (
+    ActivityLog,
+    Allocation,
+    Asset,
+    AssetCategory,
+    AuditAssignment,
+    AuditCycle,
+    AuditResult,
+    Department,
+    MaintenanceRequest,
+    Notification,
+    ResourceBooking,
+    TransferRequest,
+    User,
+)
+
+__all__ = [
+    "User",
+    "Department",
+    "AssetCategory",
+    "Asset",
+    "Allocation",
+    "TransferRequest",
+    "ResourceBooking",
+    "MaintenanceRequest",
+    "AuditCycle",
+    "AuditAssignment",
+    "AuditResult",
+    "ActivityLog",
+    "Notification",
+]
