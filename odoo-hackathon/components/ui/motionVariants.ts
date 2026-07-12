@@ -1,7 +1,7 @@
 // Shared Framer Motion animation variants for consistent page transitions
 import type { Variants } from 'framer-motion';
 
-export const smoothTransition = { type: "tween", ease: "easeOut", duration: 0.35 };
+export const smoothTransition: any = { type: "tween", ease: "easeOut", duration: 0.35 };
 
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },

@@ -5,7 +5,15 @@ export class ApiError extends Error {
   public data: any;
 
   constructor(status: number, data: any, message?: string) {
-    super(message || data?.detail || 'An API error occurred');
+    let errMsg = message;
+    if (!errMsg && data?.detail) {
+      if (typeof data.detail === 'string') {
+        errMsg = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        errMsg = data.detail.map((e: any) => e.msg.replace('Value error, ', '')).join(', ');
+      }
+    }
+    super(errMsg || 'An API error occurred');
     this.status = status;
     this.data = data;
   }
