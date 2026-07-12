@@ -27,7 +27,7 @@ The backend server is split into 14 distinct tasks, divided equally (7 tasks eac
 - **Rule**: Registration defaults to the `'employee'` role with zero self-elevation.
 - Implement cookie/session verification middleware for API route protection.
 
-### Task A3: Department & Category CRUD APIs
+### Task A3: Department & Category CRUD APIs (done)
 - Implement endpoints to create/edit/deactivate Departments (supporting hierarchy with parent departments and head assignment).
 - Implement Category CRUD handling dynamic category-specific fields (JSON model).
 
