@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.routes import auth, categories, departments
+from app.api.routes import auth, categories, departments, employees
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
 api_router.include_router(departments.router)
 api_router.include_router(categories.router)
+api_router.include_router(employees.router)
