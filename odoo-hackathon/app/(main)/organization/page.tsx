@@ -16,12 +16,14 @@ interface Category {
   id: string;
   name: string;
   description: string;
+  customFields?: string;
   status: 'Active' | 'Inactive';
 }
 
 interface Employee {
   id: string;
   name: string;
+  email: string;
   role: string;
   department: string | null;
   status: 'Active' | 'Inactive';
@@ -34,15 +36,15 @@ const initialDepartments: Department[] = [
 ];
 
 const initialCategories: Category[] = [
-  { id: "cat_1", name: "Laptops", description: "Company laptops and chargers", status: "Active" },
-  { id: "cat_2", name: "Conference Rooms", description: "Meeting rooms and spaces", status: "Active" },
-  { id: "cat_3", name: "AV Equipment", description: "Projectors and microphones", status: "Inactive" }
+  { id: "cat_1", name: "Electronics", description: "Company laptops and chargers", customFields: "Warranty Period, OS", status: "Active" },
+  { id: "cat_2", name: "Furniture", description: "Meeting rooms and spaces", customFields: "Material, Dimensions", status: "Active" },
+  { id: "cat_3", name: "Vehicles", description: "Company vehicles", customFields: "Mileage, License Plate", status: "Inactive" }
 ];
 
 const initialEmployees: Employee[] = [
-  { id: "emp_1", name: "Aditi Rao", role: "Head of Engineering", department: "Engineering", status: "Active" },
-  { id: "emp_2", name: "Rohan Mehta", role: "Facilities Manager", department: "Facilities", status: "Active" },
-  { id: "emp_3", name: "Sana Iqbal", role: "Field Technician", department: "Field Ops (East)", status: "Inactive" }
+  { id: "emp_1", name: "Aditi Rao", email: "aditi@company.com", role: "Department Head", department: "Engineering", status: "Active" },
+  { id: "emp_2", name: "Rohan Mehta", email: "rohan@company.com", role: "Asset Manager", department: "Facilities", status: "Active" },
+  { id: "emp_3", name: "Sana Iqbal", email: "sana@company.com", role: "Employee", department: "Field Ops (East)", status: "Inactive" }
 ];
 
 const tabs = [
@@ -91,9 +93,9 @@ export default function OrganizationSetup() {
     if (activeTab === 'departments') {
       setFormData({ departmentName: '', head: '', parentDept: 'None', status: 'Active' });
     } else if (activeTab === 'categories') {
-      setFormData({ name: '', description: '', status: 'Active' });
+      setFormData({ name: '', description: '', customFields: '', status: 'Active' });
     } else {
-      setFormData({ name: '', role: '', department: 'None', status: 'Active' });
+      setFormData({ name: '', email: '', role: 'Employee', department: 'None', status: 'Active' });
     }
     setIsModalOpen(true);
   };
@@ -104,9 +106,9 @@ export default function OrganizationSetup() {
     if (activeTab === 'departments') {
       setFormData({ departmentName: item.departmentName, head: item.head, parentDept: item.parentDept || 'None', status: item.status });
     } else if (activeTab === 'categories') {
-      setFormData({ name: item.name, description: item.description, status: item.status });
+      setFormData({ name: item.name, description: item.description, customFields: item.customFields || '', status: item.status });
     } else {
-      setFormData({ name: item.name, role: item.role, department: item.department || 'None', status: item.status });
+      setFormData({ name: item.name, email: item.email || '', role: item.role, department: item.department || 'None', status: item.status });
     }
     setIsModalOpen(true);
   };
@@ -130,16 +132,16 @@ export default function OrganizationSetup() {
     } else if (activeTab === 'categories') {
       if (!formData.name?.trim()) return;
       if (modalMode === 'add') {
-        setCategoriesList([...categoriesList, { id: `cat_${Date.now()}`, name: formData.name, description: formData.description, status: formData.status }]);
+        setCategoriesList([...categoriesList, { id: `cat_${Date.now()}`, name: formData.name, description: formData.description, customFields: formData.customFields, status: formData.status }]);
       } else {
-        setCategoriesList(categoriesList.map(c => c.id === editingId ? { ...c, name: formData.name, description: formData.description, status: formData.status } : c));
+        setCategoriesList(categoriesList.map(c => c.id === editingId ? { ...c, name: formData.name, description: formData.description, customFields: formData.customFields, status: formData.status } : c));
       }
     } else {
-      if (!formData.name?.trim() || !formData.role?.trim()) return;
+      if (!formData.name?.trim() || !formData.email?.trim() || !formData.role?.trim()) return;
       if (modalMode === 'add') {
-        setEmployeesList([...employeesList, { id: `emp_${Date.now()}`, name: formData.name, role: formData.role, department: formData.department === 'None' ? null : formData.department, status: formData.status }]);
+        setEmployeesList([...employeesList, { id: `emp_${Date.now()}`, name: formData.name, email: formData.email, role: formData.role, department: formData.department === 'None' ? null : formData.department, status: formData.status }]);
       } else {
-        setEmployeesList(employeesList.map(e => e.id === editingId ? { ...e, name: formData.name, role: formData.role, department: formData.department === 'None' ? null : formData.department, status: formData.status } : e));
+        setEmployeesList(employeesList.map(e => e.id === editingId ? { ...e, name: formData.name, email: formData.email, role: formData.role, department: formData.department === 'None' ? null : formData.department, status: formData.status } : e));
       }
     }
     closeFormModal();
@@ -246,6 +248,7 @@ export default function OrganizationSetup() {
                   <>
                     <th className="px-6 py-4 font-semibold">Category</th>
                     <th className="px-6 py-4 font-semibold">Description</th>
+                    <th className="px-6 py-4 font-semibold">Custom Fields</th>
                   </>
                 )}
                 {activeTab === 'employees' && (
@@ -302,6 +305,9 @@ export default function OrganizationSetup() {
                       <td className="px-6 py-4 text-text-secondary">
                         {item.description}
                       </td>
+                      <td className="px-6 py-4 text-text-secondary text-[12px]">
+                        {item.customFields || '—'}
+                      </td>
                     </>
                   )}
 
@@ -312,7 +318,10 @@ export default function OrganizationSetup() {
                           <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary shrink-0">
                             {getInitials(item.name)}
                           </div>
-                          <span className="font-semibold text-text-primary capitalize">{item.name}</span>
+                          <div>
+                            <span className="font-semibold text-text-primary capitalize block">{item.name}</span>
+                            <span className="text-[12px] text-text-muted">{item.email}</span>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-text-secondary font-medium capitalize">
@@ -434,6 +443,16 @@ export default function OrganizationSetup() {
                         className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Custom Fields (Optional)</label>
+                      <input 
+                        type="text" 
+                        value={formData.customFields || ''}
+                        onChange={(e) => setFormData({...formData, customFields: e.target.value})}
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
+                        placeholder="e.g. Warranty Period, Model"
+                      />
+                    </div>
                   </>
                 )}
 
@@ -449,13 +468,26 @@ export default function OrganizationSetup() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Role *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Email *</label>
                       <input 
-                        type="text" 
-                        value={formData.role || ''}
-                        onChange={(e) => setFormData({...formData, role: e.target.value})}
+                        type="email" 
+                        value={formData.email || ''}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
                         className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Role *</label>
+                      <select 
+                        value={formData.role || 'Employee'}
+                        onChange={(e) => setFormData({...formData, role: e.target.value})}
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="Employee">Employee</option>
+                        <option value="Department Head">Department Head</option>
+                        <option value="Asset Manager">Asset Manager</option>
+                        <option value="Admin">Admin</option>
+                      </select>
                     </div>
                     <div>
                       <label className="block text-[13px] font-medium text-text-secondary mb-2">Department</label>
