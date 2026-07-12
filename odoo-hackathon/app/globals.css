@@ -15,6 +15,9 @@
   --primary: #0B57D0;
   --primary-hover: #0842A0;
   --primary-tint: #D3E3FD;
+  --btn-bg: #E8F0FE;
+  --btn-text: #0B57D0;
+  --btn-hover: #D3E3FD;
   --muted: #444746;
   --faint: #747775;
 
@@ -41,6 +44,9 @@
   --primary: #A8C7FA;
   --primary-hover: #D3E3FD;
   --primary-tint: #004A77;
+  --btn-bg: #282A2C;
+  --btn-text: #A8C7FA;
+  --btn-hover: #343638;
   --muted: #C4C7C5;
   --faint: #8E918F;
 
@@ -63,6 +69,9 @@
   --color-primary-hover: var(--primary-hover);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-text: var(--btn-text);
+  --color-btn-hover: var(--btn-hover);
   --color-border: var(--border);
   --color-muted: var(--muted);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

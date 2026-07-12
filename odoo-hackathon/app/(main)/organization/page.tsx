@@ -14,7 +14,7 @@ export default function OrganizationSetup() {
           <h1 className="text-3xl font-bold text-foreground tracking-tight">Organization setup</h1>
           <p className="text-[15px] text-muted mt-1">Manage departments, categories, and employees.</p>
         </div>
-        <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2.5 rounded-md font-medium text-sm transition-all shadow-sm">
+        <button className="flex items-center justify-center gap-2 bg-btn-bg hover:bg-btn-hover text-btn-text px-4 py-2.5 rounded-full font-medium text-sm transition-all shadow-sm">
           <Plus className="h-4 w-4" />
           Add Department
         </button>

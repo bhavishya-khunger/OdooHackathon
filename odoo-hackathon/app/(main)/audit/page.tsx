@@ -117,7 +117,7 @@ export default function AuditPage() {
             </div>
             <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
               <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-surface-hover font-medium transition-colors">Cancel</button>
-              <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-medium transition-colors">Start Audit</button>
+              <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-full bg-btn-bg hover:bg-btn-hover text-btn-text font-medium transition-colors">Start Audit</button>
             </div>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function AuditPage() {
                 
                 <div className="flex gap-3 w-full">
                   <button onClick={() => setShowCloseModal(false)} className="flex-1 py-2.5 rounded-xl border border-border text-foreground hover:bg-surface-hover font-medium transition-colors">Cancel</button>
-                  <button onClick={closeAuditCycle} className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-medium transition-colors">Confirm & Lock</button>
+                  <button onClick={closeAuditCycle} className="flex-1 py-2.5 rounded-full bg-btn-bg hover:bg-btn-hover text-btn-text font-medium transition-colors">Confirm & Lock</button>
                 </div>
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function AuditPage() {
     <div className="max-w-5xl mx-auto h-full flex flex-col pt-2 pb-12 animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-medium text-foreground tracking-tight">Asset Audit</h1>
-        <button onClick={() => setIsCreating(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl text-sm font-medium transition-colors shadow-sm">
+        <button onClick={() => setIsCreating(true)} className="flex items-center gap-2 px-5 py-2.5 bg-btn-bg hover:bg-btn-hover text-btn-text rounded-full text-sm font-medium transition-colors shadow-sm">
           <Plus className="h-4 w-4" />
           New Audit Cycle
         </button>
