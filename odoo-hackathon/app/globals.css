@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #F4F5F7; /* Jira-like light gray background */
-  --foreground: #172B4D; /* Professional dark blue-gray text */
-  --primary: #0052CC; /* Jira-like blue */
-  --primary-hover: #0047B3;
-  --surface: #FFFFFF;
-  --border: #DFE1E6;
+  /* ── Light theme tokens ─────────────────────────── */
+  --bg:         #F8FAFC;
+  --surface:    #FFFFFF;
+  --surface-2:  #F1F5F9;
+  --border:     #E2E8F0;
+  --fg:         #0F172A;
+  --fg-muted:   #64748B;
+  --accent:     #0891B2;
+}
+
+.dark {
+  /* ── Dark theme tokens ──────────────────────────── */
+  --bg:         #010810;
+  --surface:    #051324;
+  --surface-2:  #0A1E3F;
+  --border:     rgba(8, 145, 178, 0.25);
+  --fg:         #E2F0FF;
+  --fg-muted:   rgba(186, 230, 253, 0.45);
+  --accent:     #06B6D4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-surface: var(--surface);
-  --color-border: var(--border);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth theme-aware scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar { width: 5px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 99px;
 }
