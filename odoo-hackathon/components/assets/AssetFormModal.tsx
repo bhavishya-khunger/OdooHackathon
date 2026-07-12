@@ -1,263 +1,260 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { Asset } from './AssetTable';
+import { AssetResponse } from './AssetTable';
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Department {
+  id: number;
+  name: string;
+}
 
 interface AssetFormModalProps {
   isOpen: boolean;
   mode: 'add' | 'edit';
-  initialData: Asset | null;
+  initialData: AssetResponse | null;
+  categories: Category[];
+  departments: Department[];
   onClose: () => void;
-  onSave: (asset: Asset) => void;
+  onSave: (assetData: any) => void;
 }
 
-export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, mode, initialData, onClose, onSave }) => {
-  const [formData, setFormData] = useState<Partial<Asset>>({
-    tag: '',
+export const AssetFormModal: React.FC<AssetFormModalProps> = ({ 
+  isOpen, mode, initialData, categories, departments, onClose, onSave 
+}) => {
+  const [formData, setFormData] = useState<any>({
     name: '',
-    category: 'Electronics',
-    status: 'Available',
+    category_id: '',
+    status: 'available',
     location: '',
-    serialNumber: '',
-    acquisitionDate: '',
-    acquisitionCost: '',
-    condition: 'Good',
-    department: '',
-    shared: false
+    serial_number: '',
+    acquisition_date: '',
+    acquisition_cost: '',
+    condition: 'good',
+    department_id: '',
+    is_shared: false
   });
 
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && initialData) {
-        setFormData(initialData);
+        setFormData({
+          name: initialData.name,
+          category_id: initialData.category_id,
+          status: initialData.status,
+          location: initialData.location,
+          serial_number: initialData.serial_number || '',
+          acquisition_date: initialData.acquisition_date || '',
+          acquisition_cost: initialData.acquisition_cost || '',
+          condition: initialData.condition || 'good',
+          department_id: initialData.department_id || '',
+          is_shared: initialData.is_shared || false
+        });
       } else {
         setFormData({ 
-          tag: '', name: '', category: 'Electronics', status: 'Available', location: '',
-          serialNumber: '', acquisitionDate: '', acquisitionCost: '', condition: 'Good',
-          department: '', shared: false
+          name: '', category_id: categories.length > 0 ? categories[0].id : '', 
+          status: 'available', location: '', serial_number: '', 
+          acquisition_date: new Date().toISOString().split('T')[0], 
+          acquisition_cost: '', condition: 'good', department_id: '', is_shared: false
         });
       }
     }
-  }, [isOpen, mode, initialData]);
+  }, [isOpen, mode, initialData, categories]);
 
   if (!isOpen) return null;
 
   const handleSave = () => {
-    if (!formData.name || !formData.category || !formData.status || !formData.location) return;
+    if (!formData.name || !formData.category_id || !formData.status || !formData.location || !formData.acquisition_cost || !formData.acquisition_date || !formData.serial_number) {
+      alert("Please fill in all required fields (Name, Category, Status, Location, Date, Cost, Serial).");
+      return;
+    }
     
-    const generatedTag = formData.tag || `AF-${Math.floor(1000 + Math.random() * 9000)}`;
-    
-    const assetToSave: Asset = {
-      id: initialData?.id || `asset_${Date.now()}`,
-      tag: generatedTag,
-      name: formData.name,
-      category: formData.category,
-      status: formData.status,
-      location: formData.location,
-      serialNumber: formData.serialNumber,
-      acquisitionDate: formData.acquisitionDate,
-      acquisitionCost: formData.acquisitionCost,
-      condition: formData.condition,
-      department: formData.department,
-      shared: formData.shared,
-      history: initialData?.history || []
+    const payload = {
+      ...formData,
+      category_id: Number(formData.category_id),
+      acquisition_cost: Number(formData.acquisition_cost),
+      department_id: formData.department_id ? Number(formData.department_id) : null,
     };
-    onSave(assetToSave);
+    onSave(payload);
   };
-
-  const isFormValid = formData.name && formData.category && formData.status && formData.location;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans">
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        exit={{ opacity: 0 }} 
-        className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm"
+      <div 
+        className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }} 
-        animate={{ opacity: 1, scale: 1 }} 
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-lg bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300 flex flex-col max-h-[90vh]"
+      <div 
+        className="relative w-full max-w-lg bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
       >
-        <div className="flex items-center justify-between p-6 border-b border-border-base shrink-0">
-          <h2 className="text-lg font-semibold tracking-tight text-text-primary">
+        <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             {mode === 'add' ? 'Register New Asset' : 'Edit Asset'}
           </h2>
-          <button onClick={onClose} className="text-text-secondary hover:text-text-primary transition-colors">
+          <button onClick={onClose} className="text-muted hover:text-foreground transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
         
         <div className="p-6 space-y-5 overflow-y-auto">
+          {/* Note: Tag is auto-generated by the backend so we don't include it in creation */}
+          
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Asset Tag (Auto-generated if empty)</label>
-              <input 
-                type="text" 
-                value={formData.tag || ''}
-                onChange={(e) => setFormData({...formData, tag: e.target.value})}
-                placeholder="Leave blank for auto"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus font-mono transition-colors"
-              />
-            </div>
-            <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Asset Name *</label>
+            <div className="col-span-2">
+              <label className="block text-[13px] font-medium text-muted mb-2">Asset Name *</label>
               <input 
                 type="text" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 placeholder="e.g. Dell Laptop"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Category *</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Category *</label>
               <select 
-                value={formData.category}
-                onChange={(e) => setFormData({...formData, category: e.target.value})}
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
+                value={formData.category_id}
+                onChange={(e) => setFormData({...formData, category_id: e.target.value})}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer transition-colors"
               >
-                <option value="Electronics">Electronics</option>
-                <option value="Furniture">Furniture</option>
-                <option value="Vehicles">Vehicles</option>
-                <option value="Infrastructure">Infrastructure</option>
+                <option value="">Select Category</option>
+                {categories.map(c => (
+                   <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
               </select>
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Status *</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Status *</label>
               <select 
                 value={formData.status}
                 onChange={(e) => setFormData({...formData, status: e.target.value})}
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
+                disabled={mode === 'add'} // Status defaults to available on add
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer transition-colors disabled:opacity-60"
               >
-                <option value="Available">Available</option>
-                <option value="Allocated">Allocated</option>
-                <option value="Reserved">Reserved</option>
-                <option value="Under Maintenance">Under Maintenance</option>
-                <option value="Lost">Lost</option>
-                <option value="Retired">Retired</option>
-                <option value="Disposed">Disposed</option>
+                <option value="available">Available</option>
+                <option value="allocated">Allocated</option>
+                <option value="reserved">Reserved</option>
+                <option value="under_maintenance">Under Maintenance</option>
+                <option value="lost">Lost</option>
+                <option value="retired">Retired</option>
+                <option value="disposed">Disposed</option>
               </select>
+              {mode === 'add' && <p className="text-[10px] text-muted mt-1">New assets start as Available</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Location *</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Location *</label>
               <input 
                 type="text" 
                 value={formData.location}
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
                 placeholder="e.g. Bengaluru HQ"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors"
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Department</label>
-              <input 
-                type="text" 
-                value={formData.department || ''}
-                onChange={(e) => setFormData({...formData, department: e.target.value})}
-                placeholder="e.g. Engineering"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
-              />
+              <label className="block text-[13px] font-medium text-muted mb-2">Department</label>
+              <select 
+                value={formData.department_id}
+                onChange={(e) => setFormData({...formData, department_id: e.target.value})}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer transition-colors"
+              >
+                <option value="">None / Company-wide</option>
+                {departments.map(d => (
+                   <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Serial Number</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Serial Number *</label>
               <input 
                 type="text" 
-                value={formData.serialNumber || ''}
-                onChange={(e) => setFormData({...formData, serialNumber: e.target.value})}
+                value={formData.serial_number}
+                onChange={(e) => setFormData({...formData, serial_number: e.target.value})}
                 placeholder="e.g. SN-10293"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus font-mono transition-colors"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground placeholder:text-muted focus:outline-none focus:border-primary font-mono transition-colors"
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Condition</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Condition</label>
               <select 
-                value={formData.condition || 'Good'}
+                value={formData.condition}
                 onChange={(e) => setFormData({...formData, condition: e.target.value})}
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer transition-colors"
               >
-                <option value="Excellent">Excellent</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
-                <option value="Poor">Poor</option>
+                <option value="new">New</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Acquisition Date</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Acquisition Date *</label>
               <input 
                 type="date" 
-                value={formData.acquisitionDate || ''}
-                onChange={(e) => setFormData({...formData, acquisitionDate: e.target.value})}
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus transition-colors"
+                value={formData.acquisition_date}
+                onChange={(e) => setFormData({...formData, acquisition_date: e.target.value})}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label className="block text-[13px] font-medium text-text-secondary mb-2">Acquisition Cost</label>
+              <label className="block text-[13px] font-medium text-muted mb-2">Acquisition Cost *</label>
               <input 
-                type="text" 
-                value={formData.acquisitionCost || ''}
-                onChange={(e) => setFormData({...formData, acquisitionCost: e.target.value})}
-                placeholder="e.g. $1,200"
-                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
+                type="number" 
+                value={formData.acquisition_cost}
+                onChange={(e) => setFormData({...formData, acquisition_cost: e.target.value})}
+                placeholder="e.g. 1200"
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-bg-surface-alt p-4 rounded-xl border border-border-base">
+          <div className="flex items-center justify-between bg-surface-alt p-4 rounded-xl border border-border">
             <div>
-              <p className="text-[13px] font-medium text-text-primary">Shared / Bookable</p>
-              <p className="text-[11px] text-text-secondary mt-0.5">Allow this asset to be booked by others</p>
+              <p className="text-[13px] font-medium text-foreground">Shared / Bookable</p>
+              <p className="text-[11px] text-muted mt-0.5">Allow this asset to be booked by others</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
-                checked={formData.shared || false}
-                onChange={(e) => setFormData({...formData, shared: e.target.checked})}
+                checked={formData.is_shared}
+                onChange={(e) => setFormData({...formData, is_shared: e.target.checked})}
                 className="sr-only peer" 
               />
               <div className="w-11 h-6 bg-border-strong peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-text-primary"></div>
             </label>
           </div>
-
-          <div>
-            <label className="block text-[13px] font-medium text-text-secondary mb-2">Photo / Documents</label>
-            <div className="w-full h-24 border-2 border-dashed border-border-strong rounded-xl flex items-center justify-center bg-bg-base hover:bg-bg-surface-alt cursor-pointer transition-colors">
-              <span className="text-[12px] text-text-muted font-medium">Click to upload or drag and drop</span>
-            </div>
-          </div>
         </div>
         
-        <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt transition-colors duration-300 shrink-0">
+        <div className="p-6 border-t border-border flex justify-end gap-3 bg-surface-alt transition-colors duration-300 shrink-0">
           <button 
             onClick={onClose}
-            className="px-5 py-2 text-[13px] font-medium text-text-secondary hover:text-text-primary transition-colors"
+            className="px-5 py-2 text-[13px] font-medium text-muted hover:text-foreground transition-colors"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
-            disabled={!isFormValid}
-            className="px-5 py-2 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 text-[13px] font-medium  bg-btn-bg hover:bg-btn-hover text-btn-text shadow-sm hover:opacity-90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {mode === 'add' ? 'Register' : 'Save Changes'}
           </button>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

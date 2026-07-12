@@ -29,6 +29,19 @@ class AssetCreate(BaseModel):
     department_id: Optional[int] = None
 
 
+class AssetUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    category_id: Optional[int] = None
+    serial_number: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    acquisition_date: Optional[date] = None
+    acquisition_cost: Optional[float] = Field(default=None, gt=0)
+    condition: Optional[AssetCondition] = None
+    location: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    photo_url: Optional[str] = Field(default=None, max_length=500)
+    is_shared: Optional[bool] = None
+    department_id: Optional[int] = None
+
+
 class AssetStatusUpdate(BaseModel):
     status: AssetStatus
 

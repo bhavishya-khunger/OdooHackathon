@@ -18,6 +18,7 @@ from app.schemas.asset import (
     AssetHistoryResponse,
     AssetResponse,
     AssetStatusUpdate,
+    AssetUpdate,
     MaintenanceHistoryItem,
 )
 
@@ -215,6 +216,33 @@ class AssetService:
             )
         asset, category_name, department_name = row
         return self._to_response(asset, category_name, department_name)
+
+    def update(self, asset_id: int, data: AssetUpdate) -> AssetResponse:
+        asset = self.session.get(Asset, asset_id)
+        if not asset:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Asset not found",
+            )
+            
+        update_data = data.model_dump(exclude_unset=True)
+        
+        if "category_id" in update_data and update_data["category_id"] is not None:
+            self._validate_category(update_data["category_id"])
+            
+        if "department_id" in update_data and update_data["department_id"] is not None:
+            self._validate_department(update_data["department_id"])
+            
+        if "serial_number" in update_data and update_data["serial_number"] != asset.serial_number:
+            self._validate_unique_serial(update_data["serial_number"])
+
+        for key, value in update_data.items():
+            setattr(asset, key, value)
+
+        self.session.add(asset)
+        self.session.commit()
+        self.session.refresh(asset)
+        return self.get_asset(asset.id)
 
     def update_status(self, asset_id: int, data: AssetStatusUpdate) -> AssetResponse:
         asset = self.session.get(Asset, asset_id)

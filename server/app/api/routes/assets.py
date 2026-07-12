@@ -11,6 +11,7 @@ from app.schemas.asset import (
     AssetHistoryResponse,
     AssetResponse,
     AssetStatusUpdate,
+    AssetUpdate,
 )
 from app.services.asset_service import AssetService
 
@@ -73,6 +74,17 @@ def get_asset(
     service: AssetService = Depends(get_asset_service),
 ):
     return service.get_asset(asset_id)
+
+
+@router.patch("/{asset_id}", response_model=AssetResponse)
+def update_asset(
+    asset_id: int,
+    body: AssetUpdate,
+    _: User = Depends(MANAGE_ASSETS),
+    service: AssetService = Depends(get_asset_service),
+):
+    return service.update(asset_id, body)
+
 
 
 @router.patch("/{asset_id}/status", response_model=AssetResponse)
