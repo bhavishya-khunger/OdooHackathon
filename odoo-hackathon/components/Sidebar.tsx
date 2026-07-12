@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from './providers/AuthProvider';
+import { apiFetch } from '@/lib/api';
+import { useEffect } from 'react';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -26,8 +28,52 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: 
   const pathname = usePathname();
   const [showNotifs, setShowNotifs] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const unreadCount = notifications.filter(n => !n.is_read).length;
   const { user, logout } = useAuth();
   
+  
+  const fetchNotifications = async () => {
+    try {
+      const data = await apiFetch('/notifications');
+      setNotifications((data as any[]) || []);
+    } catch (e) {
+      console.error('Failed to fetch notifications', e);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const markAsRead = async (id: number) => {
+    try {
+      await apiFetch(`/notifications/${id}/read`, { method: 'PATCH' });
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+    } catch (e) {
+      console.error('Failed to mark notification read', e);
+    }
+  };
+  
+  // Helper for relative time
+  const timeAgo = (dateStr: string) => {
+    const date = new Date(dateStr + "Z");
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + "y ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + "mo ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + "d ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + "h ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + "m ago";
+    return "Just now";
+  };
+
   const getInitials = (name?: string) => {
     if (!name) return 'UN';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -84,27 +130,23 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: 
               <Link href="/notifications" onClick={() => setShowNotifs(false)} className="text-xs text-primary hover:text-primary-hover font-medium px-2 py-1 bg-primary/10 rounded-md">View all</Link>
             </div>
             <div className="flex flex-col max-h-80 overflow-y-auto">
-              <div className="p-3 border-b border-border hover:bg-surface-hover/30 transition-colors cursor-pointer flex gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
-                <div>
-                  <div className="text-[13px] font-medium text-foreground mb-0.5">Laptop AF-0014 assigned</div>
-                  <div className="text-[11px] text-muted">2m ago • Request #TR-992 approved</div>
-                </div>
-              </div>
-              <div className="p-3 border-b border-border hover:bg-surface-hover/30 transition-colors cursor-pointer flex gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
-                <div>
-                  <div className="text-[13px] font-medium text-foreground mb-0.5">Maintenance approved</div>
-                  <div className="text-[11px] text-muted">18m ago • Projector AF-0055</div>
-                </div>
-              </div>
-              <div className="p-3 hover:bg-surface-hover/30 transition-colors cursor-pointer flex gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></div>
-                <div>
-                  <div className="text-[13px] font-medium text-foreground mb-0.5">Overdue return: AF-0021</div>
-                  <div className="text-[11px] text-muted">1d ago • Due 09-Jul-2026</div>
-                </div>
-              </div>
+              {notifications.length === 0 ? (
+                <div className="p-4 text-center text-xs text-muted">No new notifications</div>
+              ) : (
+                notifications.slice(0, 10).map((notif: any) => (
+                  <div 
+                    key={notif.id}
+                    onClick={() => { if (!notif.is_read) markAsRead(notif.id); }}
+                    className={`p-3 border-b border-border hover:bg-surface-hover/30 transition-colors cursor-pointer flex gap-3 ${!notif.is_read ? 'bg-primary/5' : ''}`}
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${notif.type === 'error' ? 'bg-rose-500' : notif.type === 'warning' ? 'bg-amber-500' : notif.type === 'success' ? 'bg-emerald-500' : 'bg-blue-500'}`}></div>
+                    <div>
+                      <div className={`text-[13px] ${notif.is_read ? 'text-foreground/80 font-normal' : 'text-foreground font-medium'} mb-0.5`}>{notif.message}</div>
+                      <div className="text-[11px] text-muted">{timeAgo(notif.created_at)}</div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -112,12 +154,12 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: 
         {/* Quick Action Icons */}
         <div className={`flex items-center ${isCollapsed ? 'flex-col gap-3' : 'gap-1.5 px-2 w-full'}`}>
           <button
-            onClick={() => setShowNotifs(!showNotifs)}
+            onClick={() => { setShowNotifs(!showNotifs); if (!showNotifs) fetchNotifications(); }}
             className={`p-2 rounded-full transition-colors border shrink-0 relative ${showNotifs ? 'bg-surface-hover text-foreground border-border' : 'text-muted hover:bg-surface-hover hover:text-foreground border-transparent hover:border-border'}`}
             title="Notifications"
           >
             <Bell className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full ring-2 ring-sidebar-bg"></span>
+            {unreadCount > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-sidebar-bg flex items-center justify-center"><span className="text-[7px] text-white font-bold">{unreadCount > 9 ? '9+' : unreadCount}</span></span>}
           </button>
 
           {!isCollapsed && (

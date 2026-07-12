@@ -25,10 +25,7 @@ export default function TopNav() {
         <button className="text-muted hover:text-foreground p-2 rounded-full hover:bg-surface-hover transition-colors">
           <HelpCircle className="h-5 w-5" />
         </button>
-        <button className="text-muted hover:text-foreground p-2 rounded-full hover:bg-surface-hover transition-colors relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-surface" />
-        </button>
+
         <div className="h-8 w-px bg-border mx-2 hidden sm:block"></div>
         <Link href="/login" className="flex items-center gap-2 hover:bg-surface-hover p-1.5 rounded-lg transition-colors cursor-pointer group">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
