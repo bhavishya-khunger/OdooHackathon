@@ -17,7 +17,7 @@
   --primary-tint: #D3E3FD;
   --muted: #444746;
   --faint: #747775;
-  
+
   /* Status colors - Light */
   --status-available-ic: #146C2E;
   --status-available-tint: #C4EECE;
@@ -43,7 +43,7 @@
   --primary-tint: #004A77;
   --muted: #C4C7C5;
   --faint: #8E918F;
-  
+
   /* Status colors - Dark */
   --status-available-ic: #6DD58C;
   --status-available-tint: #0F5223;
@@ -80,8 +80,15 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
-*::-webkit-scrollbar { width: 5px; }
-*::-webkit-scrollbar-track { background: transparent; }
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 *::-webkit-scrollbar-thumb {
   background-color: var(--border);
   border-radius: 99px;
