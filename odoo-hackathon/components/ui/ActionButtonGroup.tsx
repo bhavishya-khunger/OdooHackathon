@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Calendar, FileText } from 'lucide-react';
+import { Plus, Calendar, Wrench } from 'lucide-react';
 import { itemVariants, smoothTransition } from './motionVariants';
+import Link from 'next/link';
 
 const buttons = [
-  { label: 'Register Asset', icon: Plus, primary: true },
-  { label: 'Schedule Maintenance', icon: Calendar, primary: false },
-  { label: 'Generate Report', icon: FileText, primary: false }
+  { label: 'Register Asset', icon: Plus, primary: true, href: '/assets' },
+  { label: 'Book Resource', icon: Calendar, primary: false, href: '/booking' },
+  { label: 'Raise Maintenance Request', icon: Wrench, primary: false, href: '/maintenance' }
 ];
 
 export const ActionButtonGroup = () => {
@@ -17,19 +18,20 @@ export const ActionButtonGroup = () => {
       {buttons.map((btn, idx) => {
         const Icon = btn.icon;
         return (
-          <motion.button
-            key={idx}
-            whileHover={{ scale: 1.02, transition: smoothTransition }}
-            whileTap={{ scale: 0.98 }}
-            className={`px-5 py-2.5 rounded-full text-[13px] font-medium flex items-center gap-2 transition-colors border ${
-              btn.primary 
-                ? 'bg-bg-inverted text-text-inverted border-transparent hover:opacity-90' 
-                : 'bg-bg-surface text-text-primary border-border-strong hover:bg-bg-surface-hover hover:border-border-focus'
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            {btn.label}
-          </motion.button>
+          <Link href={btn.href} key={idx}>
+            <motion.button
+              whileHover={{ scale: 1.02, transition: smoothTransition }}
+              whileTap={{ scale: 0.98 }}
+              className={`px-5 py-2.5 rounded-full text-[13px] font-medium flex items-center gap-2 transition-colors border ${
+                btn.primary 
+                  ? 'bg-text-primary text-bg-base border-transparent hover:opacity-90' 
+                  : 'bg-bg-surface text-text-primary border-border-strong hover:bg-bg-surface-hover hover:border-border-focus'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              {btn.label}
+            </motion.button>
+          </Link>
         );
       })}
     </motion.div>

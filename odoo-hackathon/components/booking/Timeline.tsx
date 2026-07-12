@@ -22,7 +22,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
   const HOUR_HEIGHT = 80;
 
   return (
-    <div className="relative bg-bg-base border border-border-base rounded-2xl p-6 md:p-8 overflow-hidden">
+    <div className="relative bg-bg-base border border-border-base rounded-2xl p-6 md:p-8 overflow-hidden transition-colors duration-300">
       <div className="relative" style={{ height: `${TOTAL_HOURS * HOUR_HEIGHT}px` }}>
         
         {/* Background Grid Lines */}
@@ -35,7 +35,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
             <span className="text-[11px] font-mono font-medium text-text-muted w-12 text-right shrink-0">
               {String(TIMELINE_START_HOUR + i).padStart(2, '0')}:00
             </span>
-            <div className="flex-1 border-b border-border-base"></div>
+            <div className="flex-1 border-b border-border-base transition-colors duration-300"></div>
           </div>
         ))}
 
@@ -56,17 +56,17 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
                   onClick={() => onEditBooking(booking)}
-                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors bg-bg-surface border-border-base"
+                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors bg-bg-surface border-border-base duration-300"
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
                   }}
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-bg-inverted" />
-                  <h4 className="font-semibold text-text-primary text-[13px]">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-bg-inverted transition-colors duration-300" />
+                  <h4 className="font-semibold text-text-primary text-[13px] transition-colors duration-300">
                     {booking.title}
                   </h4>
-                  <p className="text-[11px] font-mono text-text-secondary mt-1 group-hover:text-text-secondary transition-colors">
+                  <p className="text-[11px] font-mono text-text-secondary mt-1 group-hover:text-text-primary transition-colors duration-300">
                     {booking.startTime} - {booking.endTime}
                   </p>
                 </motion.div>
@@ -87,7 +87,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   initial={{ opacity: 0, scaleY: 0, originY: 0 }}
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
-                  className="absolute w-full md:w-3/4 left-0 md:left-12 rounded-xl overflow-hidden p-3 border border-dashed border-[#ff4444] bg-[#2a1215] z-10 flex flex-col justify-center items-center"
+                  className="absolute w-full md:w-3/4 left-0 md:left-12 rounded-xl overflow-hidden p-3 border border-dashed border-red-400 dark:border-[#ff4444] bg-red-50 dark:bg-[#2a1215] z-10 flex flex-col justify-center items-center transition-colors duration-300"
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
@@ -95,12 +95,12 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                 >
                   <button 
                     onClick={onClearConflict}
-                    className="absolute top-2 right-2 p-1 text-[#ff4444] hover:text-[#ff8888] rounded-md transition-colors"
+                    className="absolute top-2 right-2 p-1 text-red-600 dark:text-[#ff4444] hover:text-red-800 dark:hover:text-[#ff8888] rounded-md transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
                   </button>
-                  <span className="font-bold text-[#ff4444] text-[13px]">Conflict Detected</span>
-                  <span className="text-[11px] text-[#ff8888] mt-1 text-center font-medium max-w-[90%] break-words">
+                  <span className="font-bold text-red-600 dark:text-[#ff4444] text-[13px] transition-colors duration-300">Conflict Detected</span>
+                  <span className="text-[11px] text-red-500 dark:text-[#ff8888] mt-1 text-center font-medium max-w-[90%] break-words transition-colors duration-300">
                     {conflict.message}
                   </span>
                 </motion.div>

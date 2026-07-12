@@ -88,14 +88,14 @@ export default function ResourceBookingPage() {
   };
 
   return (
-    <div className="min-h-full bg-bg-base text-text-primary p-10 font-sans">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 font-sans transition-colors duration-300">
       <div className="max-w-[1000px] mx-auto">
         <PageHeader title="Resource Scheduling" subtitle="Manage bookings and resolve conflicts seamlessly." />
 
-        <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden mt-6">
-          <div className="p-6 md:p-8 border-b border-border-base flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-bg-surface-alt">
+        <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden mt-6 transition-colors duration-300">
+          <div className="p-6 md:p-8 border-b border-border-base flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-bg-surface-alt transition-colors duration-300">
             
-            <div className="flex items-center gap-4 px-5 py-3.5 bg-bg-base border border-border-strong rounded-2xl shadow-sm">
+            <div className="flex items-center gap-4 px-5 py-3.5 bg-bg-base border border-border-strong rounded-2xl shadow-sm transition-colors duration-300">
               <div className="w-10 h-10 rounded-xl bg-bg-surface-alt border border-border-base flex items-center justify-center shrink-0">
                 <MapPin className="h-5 w-5 text-text-secondary" />
               </div>

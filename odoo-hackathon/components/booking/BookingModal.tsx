@@ -57,14 +57,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }} 
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }} 
         animate={{ opacity: 1, scale: 1 }} 
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-sm bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300"
       >
         <div className="flex items-center justify-between p-6 border-b border-border-base">
           <h2 className="text-lg font-semibold tracking-tight text-text-primary">
@@ -83,7 +83,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
               placeholder="e.g. Procurement Team"
-              className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-[#555] focus:outline-none focus:border-border-focus transition-colors"
+              className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
             />
           </div>
           
@@ -109,11 +109,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
           </div>
         </div>
         
-        <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt">
+        <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt transition-colors duration-300">
           {mode === 'edit' && onDelete && (
             <button 
               onClick={() => onDelete(initialData!.bookingId)}
-              className="px-5 py-2 mr-auto text-[13px] font-medium text-[#ff4444] hover:bg-bg-surface-hover rounded-full transition-colors"
+              className="px-5 py-2 mr-auto text-[13px] font-medium text-red-600 dark:text-[#ff4444] hover:bg-bg-surface-hover rounded-full transition-colors"
             >
               Cancel Booking
             </button>

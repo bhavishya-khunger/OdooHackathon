@@ -90,14 +90,14 @@ export default function AssetsPage() {
   };
 
   return (
-    <div className="min-h-full bg-bg-base text-text-primary p-10 flex flex-col font-sans relative">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 flex flex-col font-sans relative transition-colors duration-300">
       {/* Header */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
-        <h1 className="text-[28px] font-semibold tracking-tight">Assets</h1>
+        <h1 className="text-[28px] font-semibold tracking-tight transition-colors duration-300">Assets</h1>
         
         <div className="flex flex-wrap items-center gap-6">
-          {/* Filters Pill (Design Placeholder as per screenshot) */}
-          <div className="flex items-center bg-bg-surface border border-border-base rounded-full p-1 text-[13px] font-medium text-text-secondary">
+          {/* Filters Pill */}
+          <div className="flex items-center bg-bg-surface-alt border border-border-base rounded-full p-1 text-[13px] font-medium text-text-secondary transition-colors duration-300">
             <button className="px-4 py-1.5 bg-bg-surface-hover text-text-primary rounded-full transition-colors">By you</button>
             <button className="px-4 py-1.5 hover:text-text-primary transition-colors">Recents</button>
             <button className="px-4 py-1.5 hover:text-text-primary transition-colors">By others</button>
@@ -105,7 +105,7 @@ export default function AssetsPage() {
           
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-text-muted" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-text-muted transition-colors duration-300" />
             <input
               type="text"
               value={searchQuery}
@@ -129,21 +129,21 @@ export default function AssetsPage() {
 
       {assets.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center -mt-20">
-          <div className="w-[100px] h-[100px] mb-8 text-[#333]">
+          <div className="w-[100px] h-[100px] mb-8 text-border-strong transition-colors duration-300">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
               <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
               <line x1="12" y1="22.08" x2="12" y2="12" />
             </svg>
           </div>
-          <p className="text-[14px] text-text-secondary mb-8">
+          <p className="text-[14px] text-text-secondary mb-8 transition-colors duration-300">
             No assets yet. As you register and view assets, they'll appear here.
           </p>
           <button 
             onClick={handleOpenAdd}
             className="flex items-center gap-2 px-5 py-2.5 bg-transparent border border-border-strong hover:bg-bg-surface-alt hover:border-border-focus rounded-full text-[13px] font-medium text-text-primary transition-colors mb-4"
           >
-            <Box className="h-[18px] w-[18px] text-text-secondary" />
+            <Box className="h-[18px] w-[18px] text-text-secondary transition-colors duration-300" />
             Register your first asset
           </button>
         </div>
@@ -157,7 +157,7 @@ export default function AssetsPage() {
 
       {/* Floating Action Button (N) */}
       <div className="absolute bottom-10 right-10 w-11 h-11 bg-bg-surface-alt border border-border-strong rounded-full flex items-center justify-center cursor-pointer hover:bg-bg-surface-hover transition-colors shadow-lg z-10">
-        <span className="text-text-primary font-semibold text-sm">N</span>
+        <span className="text-text-primary font-semibold text-sm transition-colors duration-300">N</span>
       </div>
 
       <AnimatePresence>

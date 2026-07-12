@@ -6,12 +6,12 @@ import { CheckCircle2, AlertTriangle, ArrowRightLeft, CalendarClock, Package, Wr
 import { itemVariants, containerVariants } from './motionVariants';
 
 const statsData = [
-  { label: "Available", value: 128, icon: CheckCircle2, color: "text-text-primary" },
-  { label: "Allocated", value: 76, icon: Package, color: "text-text-secondary" },
-  { label: "Maintenance", value: 4, icon: Wrench, color: "text-text-secondary" },
+  { label: "Assets Available", value: 128, icon: CheckCircle2, color: "text-text-primary" },
+  { label: "Assets Allocated", value: 76, icon: Package, color: "text-text-secondary" },
+  { label: "Maintenance Today", value: 4, icon: Wrench, color: "text-text-secondary" },
   { label: "Active Bookings", value: 9, icon: CalendarClock, color: "text-text-secondary" },
   { label: "Pending Transfers", value: 3, icon: ArrowRightLeft, color: "text-text-secondary" },
-  { label: "Upcoming returns", value: 12, icon: AlertTriangle, color: "text-text-secondary" }
+  { label: "Upcoming Returns", value: 12, icon: AlertTriangle, color: "text-text-secondary" }
 ];
 
 export const StatsCardGrid = () => {

@@ -8,6 +8,7 @@ import { StatsCardGrid } from '@/components/ui/StatsCardGrid';
 import { AlertBanner } from '@/components/ui/AlertBanner';
 import { ActionButtonGroup } from '@/components/ui/ActionButtonGroup';
 import { ActivityFeed } from '@/components/ui/ActivityFeed';
+import { OverdueReturns } from '@/components/ui/OverdueReturns';
 
 export default function Dashboard() {
   return (
@@ -58,11 +59,7 @@ export default function Dashboard() {
 
           {/* Right Column: Placeholders for charts/visualizations */}
           <motion.div variants={itemVariants} className="flex flex-col gap-6">
-            <div className="bg-bg-surface border border-border-base rounded-3xl p-6 min-h-[250px] flex items-center justify-center transition-colors duration-300">
-              <p className="text-[14px] text-text-secondary font-medium text-center">
-                Asset Allocation Chart<br /><span className="text-[12px] opacity-70">Coming soon...</span>
-              </p>
-            </div>
+            <OverdueReturns />
             <div className="bg-bg-surface border border-border-base rounded-3xl p-6 min-h-[250px] flex items-center justify-center transition-colors duration-300">
               <p className="text-[14px] text-text-secondary font-medium text-center">
                 Maintenance Schedule<br /><span className="text-[12px] opacity-70">Coming soon...</span>
