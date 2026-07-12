@@ -75,7 +75,9 @@ export default function Sidebar() {
       {/* Footer controls */}
       <div className="px-4 pb-6 mt-auto">
         <div className="flex items-center justify-between px-2 mb-6">
-          <Settings className="h-5 w-5 text-text-secondary hover:text-text-primary cursor-pointer transition-colors" />
+          <Link href="/settings/profile">
+            <Settings className="h-5 w-5 text-text-secondary hover:text-text-primary cursor-pointer transition-colors" />
+          </Link>
           <Search className="h-5 w-5 text-text-secondary hover:text-text-primary cursor-pointer transition-colors" />
           <button onClick={toggleTheme} className="text-text-secondary hover:text-text-primary transition-colors focus:outline-none">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

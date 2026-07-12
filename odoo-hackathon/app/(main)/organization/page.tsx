@@ -169,13 +169,13 @@ export default function OrganizationSetup() {
       ? 'bg-bg-surface text-text-primary border-border-strong'
       : 'bg-bg-surface text-text-muted border-border-base'
       }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-bg-inverted' : 'bg-[#444]'}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-text-primary' : 'bg-border-focus'}`} />
       {status}
     </span>
   );
 
   return (
-    <div className="min-h-full bg-bg-base text-text-primary p-10 flex flex-col font-sans">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 flex flex-col font-sans transition-colors duration-300">
       
       {/* Header */}
       <div className="flex items-center justify-between mb-10">
@@ -193,7 +193,7 @@ export default function OrganizationSetup() {
         </button>
       </div>
 
-      <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden">
+      <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden transition-colors duration-300">
         
         {/* Tabs & Search */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-border-base">
@@ -259,7 +259,7 @@ export default function OrganizationSetup() {
                 <th className="px-6 py-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#222]">
+            <tbody className="divide-y divide-border-base">
               {filteredData.map((item: any, i: number) => (
                 <tr
                   key={item.id}
@@ -269,7 +269,7 @@ export default function OrganizationSetup() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center shrink-0">
                             <Building2 className="h-4 w-4 text-text-secondary" />
                           </div>
                           <span className="font-semibold text-text-primary capitalize">{item.departmentName}</span>
@@ -277,7 +277,7 @@ export default function OrganizationSetup() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary">
+                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary shrink-0">
                             {getInitials(item.head)}
                           </div>
                           <span className="text-text-secondary font-medium capitalize">{item.head}</span>
@@ -293,7 +293,7 @@ export default function OrganizationSetup() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center shrink-0">
                             <Tag className="h-4 w-4 text-text-secondary" />
                           </div>
                           <span className="font-semibold text-text-primary">{item.name}</span>
@@ -309,7 +309,7 @@ export default function OrganizationSetup() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary">
+                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary shrink-0">
                             {getInitials(item.name)}
                           </div>
                           <span className="font-semibold text-text-primary capitalize">{item.name}</span>
@@ -337,7 +337,7 @@ export default function OrganizationSetup() {
                       </button>
                       <button 
                         onClick={() => openDeleteModal(item)}
-                        className="text-text-secondary hover:text-[#ff4444] p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
+                        className="text-text-secondary hover:text-danger-base p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -363,7 +363,7 @@ export default function OrganizationSetup() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm"
               onClick={closeFormModal}
             />
             <motion.div 
@@ -482,7 +482,7 @@ export default function OrganizationSetup() {
                         name="status" 
                         checked={formData.status === 'Active'}
                         onChange={() => setFormData({...formData, status: 'Active'})}
-                        className="accent-[#f5f5f5]"
+                        className="accent-text-primary"
                       />
                       <span className="text-[13px] text-text-primary">Active</span>
                     </label>
@@ -492,7 +492,7 @@ export default function OrganizationSetup() {
                         name="status" 
                         checked={formData.status === 'Inactive'}
                         onChange={() => setFormData({...formData, status: 'Inactive'})}
-                        className="accent-[#f5f5f5]"
+                        className="accent-text-primary"
                       />
                       <span className="text-[13px] text-text-primary">Inactive</span>
                     </label>
@@ -524,14 +524,14 @@ export default function OrganizationSetup() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm"
               onClick={() => setIsDeleteModalOpen(false)}
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden p-6 text-center"
             >
-              <div className="mx-auto w-12 h-12 bg-[#2a1215] text-[#ff4444] flex items-center justify-center rounded-full mb-4">
+              <div className="mx-auto w-12 h-12 bg-red-100 dark:bg-[#2a1215] text-danger-base flex items-center justify-center rounded-full mb-4">
                 <Trash2 className="h-5 w-5" />
               </div>
               <h2 className="text-lg font-semibold text-text-primary mb-2">
@@ -551,7 +551,7 @@ export default function OrganizationSetup() {
                 </button>
                 <button 
                   onClick={handleDelete}
-                  className="px-5 py-2 flex-1 text-[13px] font-medium text-text-inverted bg-[#ff4444] hover:bg-[#ff6666] rounded-full transition-colors"
+                  className="px-5 py-2 flex-1 text-[13px] font-medium text-white bg-danger-base hover:bg-danger-hover rounded-full transition-colors"
                 >
                   Delete
                 </button>
