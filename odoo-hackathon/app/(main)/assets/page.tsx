@@ -7,6 +7,7 @@ import { Box, Search, Plus, Grid } from 'lucide-react';
 import { Asset, AssetTable } from '@/components/assets/AssetTable';
 import { AssetFormModal } from '@/components/assets/AssetFormModal';
 import { DeleteConfirmModal } from '@/components/assets/DeleteConfirmModal';
+import { AssetDetailsModal } from '@/components/assets/AssetDetailsModal';
 
 const initialAssets: Asset[] = [
   {
@@ -15,23 +16,41 @@ const initialAssets: Asset[] = [
     name: "Dell Laptop",
     category: "Electronics",
     status: "Allocated",
-    location: "bengaluru"
+    location: "Bengaluru",
+    serialNumber: "SN-9812739",
+    condition: "Good",
+    department: "Engineering",
+    acquisitionDate: "2026-01-10",
+    acquisitionCost: "$1,200",
+    shared: false
   },
   {
     id: "asset_002",
     tag: "AF-0062",
-    name: "Projector",
+    name: "Projector X1",
     category: "Electronics",
     status: "Maintenance",
-    location: "HQ floor 2"
+    location: "HQ Floor 2",
+    serialNumber: "PR-38491",
+    condition: "Fair",
+    department: "Facilities",
+    acquisitionDate: "2025-05-22",
+    acquisitionCost: "$800",
+    shared: true
   },
   {
     id: "asset_003",
     tag: "AF-0201",
-    name: "Office chair",
+    name: "Ergonomic Chair",
     category: "Furniture",
     status: "Available",
-    location: "Warehouse"
+    location: "Warehouse",
+    serialNumber: "EC-001",
+    condition: "Excellent",
+    department: "HR",
+    acquisitionDate: "2026-06-01",
+    acquisitionCost: "$300",
+    shared: false
   }
 ];
 
@@ -49,9 +68,19 @@ export default function AssetsPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<Asset | null>(null);
 
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [assetToView, setAssetToView] = useState<Asset | null>(null);
+
   const filteredAssets = assets.filter(asset => {
-    const matchesSearch = asset.tag.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          asset.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = 
+      asset.tag.toLowerCase().includes(q) || 
+      asset.name.toLowerCase().includes(q) ||
+      (asset.serialNumber || '').toLowerCase().includes(q) ||
+      asset.category.toLowerCase().includes(q) ||
+      asset.status.toLowerCase().includes(q) ||
+      (asset.department || '').toLowerCase().includes(q) ||
+      asset.location.toLowerCase().includes(q);
     return matchesSearch;
   });
 
@@ -70,6 +99,11 @@ export default function AssetsPage() {
   const handleOpenDelete = (asset: Asset) => {
     setAssetToDelete(asset);
     setIsDeleteOpen(true);
+  };
+
+  const handleOpenDetails = (asset: Asset) => {
+    setAssetToView(asset);
+    setIsDetailsOpen(true);
   };
 
   const handleSaveAsset = (savedAsset: Asset) => {
@@ -152,6 +186,7 @@ export default function AssetsPage() {
           assets={filteredAssets} 
           onEdit={handleOpenEdit} 
           onDelete={handleOpenDelete} 
+          onViewDetails={handleOpenDetails}
         />
       )}
 
@@ -179,6 +214,16 @@ export default function AssetsPage() {
             asset={assetToDelete}
             onClose={() => setIsDeleteOpen(false)}
             onConfirm={handleConfirmDelete}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isDetailsOpen && (
+          <AssetDetailsModal 
+            isOpen={isDetailsOpen}
+            asset={assetToView}
+            onClose={() => setIsDetailsOpen(false)}
           />
         )}
       </AnimatePresence>
