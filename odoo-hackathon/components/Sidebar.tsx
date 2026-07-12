@@ -11,7 +11,7 @@ import {
 import ThemeToggle from './ThemeToggle';
 
 const navItems = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Organization setup', href: '/organization', icon: Settings },
   { name: 'Assets', href: '/assets', icon: Box },
   { name: 'Allocation & Transfer', href: '/allocation', icon: ArrowRightLeft },

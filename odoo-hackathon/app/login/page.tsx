@@ -49,7 +49,7 @@ export default function LoginPage() {
 
     // Simulate network request
     setTimeout(() => {
-      router.push('/');
+      router.push('/dashboard');
     }, 800);
   };
 
