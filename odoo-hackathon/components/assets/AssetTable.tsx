@@ -18,23 +18,23 @@ interface AssetTableProps {
 }
 
 const getStatusBadge = (status: string) => {
-  let colorClass = 'bg-slate-100 text-slate-500 border-slate-200';
-  let dotClass = 'bg-slate-400';
+  let bgColor = 'bg-bg-surface-alt text-text-secondary border-border-strong';
+  let dotColor = 'bg-[#555]';
   
   if (status.toLowerCase() === 'allocated') {
-    colorClass = 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30';
-    dotClass = 'bg-blue-500 dark:shadow-[0_0_6px_rgba(59,130,246,0.8)]';
+    bgColor = 'bg-[#102a40] text-[#4ea8ff] border-[#1a4266]';
+    dotColor = 'bg-[#4ea8ff]';
   } else if (status.toLowerCase() === 'available') {
-    colorClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30';
-    dotClass = 'bg-emerald-500 dark:shadow-[0_0_6px_rgba(16,185,129,0.8)]';
+    bgColor = 'bg-[#10301a] text-[#4ade80] border-[#1a4d29]';
+    dotColor = 'bg-[#4ade80]';
   } else if (status.toLowerCase() === 'maintenance') {
-    colorClass = 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30';
-    dotClass = 'bg-amber-500 dark:shadow-[0_0_6px_rgba(245,158,11,0.8)]';
+    bgColor = 'bg-[#3d250c] text-[#fbbf24] border-[#663d14]';
+    dotColor = 'bg-[#fbbf24]';
   }
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold border ${colorClass}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border ${bgColor}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
       {status}
     </span>
   );
@@ -42,9 +42,9 @@ const getStatusBadge = (status: string) => {
 
 export const AssetTable: React.FC<AssetTableProps> = ({ assets, onEdit, onDelete }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left">
-        <thead className="text-[10px] text-slate-400 dark:text-cyan-400/60 font-mono uppercase tracking-[0.15em] bg-slate-50/80 dark:bg-[#030D1A]/40 border-b border-slate-100 dark:border-cyan-900/20">
+    <div className="overflow-x-auto bg-bg-surface border border-border-base rounded-3xl">
+      <table className="w-full text-[13px] text-left">
+        <thead className="text-[11px] text-text-muted uppercase tracking-wider bg-bg-surface-alt border-b border-border-base">
           <tr>
             <th className="px-6 py-4 font-semibold">Tag</th>
             <th className="px-6 py-4 font-semibold">Name</th>
@@ -54,46 +54,46 @@ export const AssetTable: React.FC<AssetTableProps> = ({ assets, onEdit, onDelete
             <th className="px-6 py-4 font-semibold text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-cyan-900/20">
+        <tbody className="divide-y divide-[#222]">
           {assets.map((asset, i) => (
             <motion.tr
               key={asset.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05, duration: 0.25 }}
-              className="hover:bg-slate-50 dark:hover:bg-cyan-900/10 transition-colors group"
+              className="hover:bg-bg-surface-hover transition-colors group"
             >
               <td className="px-6 py-4">
-                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-semibold">{asset.tag}</span>
+                <span className="font-mono text-text-primary font-semibold">{asset.tag}</span>
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-cyan-950/40 border border-slate-200 dark:border-cyan-900/40 flex items-center justify-center">
-                    <Box className="h-4 w-4 text-slate-400 dark:text-cyan-400/60" />
+                  <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center shrink-0">
+                    <Box className="h-4 w-4 text-text-secondary" />
                   </div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{asset.name}</span>
+                  <span className="font-semibold text-text-primary">{asset.name}</span>
                 </div>
               </td>
-              <td className="px-6 py-4 text-slate-500 dark:text-cyan-100/70 capitalize">
+              <td className="px-6 py-4 text-text-secondary capitalize">
                 {asset.category}
               </td>
               <td className="px-6 py-4">
                 {getStatusBadge(asset.status)}
               </td>
-              <td className="px-6 py-4 text-slate-500 dark:text-cyan-100/70 capitalize">
+              <td className="px-6 py-4 text-text-secondary capitalize">
                 {asset.location}
               </td>
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button 
                     onClick={() => onEdit(asset)}
-                    className="text-slate-400 hover:text-cyan-600 dark:text-cyan-100/40 dark:hover:text-cyan-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-cyan-900/30 transition-colors"
+                    className="text-text-secondary hover:text-text-primary p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
                   >
                     <Edit2 className="h-4 w-4" />
                   </button>
                   <button 
                     onClick={() => onDelete(asset)}
-                    className="text-slate-400 hover:text-red-600 dark:text-cyan-100/40 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                    className="text-text-secondary hover:text-[#ff4444] p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -103,7 +103,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({ assets, onEdit, onDelete
           ))}
           {assets.length === 0 && (
             <tr>
-              <td colSpan={6} className="px-6 py-16 text-center text-slate-400 dark:text-cyan-100/30 text-sm font-mono">
+              <td colSpan={6} className="px-6 py-16 text-center text-text-muted text-sm">
                 No assets match your filters.
               </td>
             </tr>

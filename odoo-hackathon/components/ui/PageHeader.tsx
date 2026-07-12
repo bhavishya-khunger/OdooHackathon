@@ -16,7 +16,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
         <motion.h1 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-[28px] font-semibold text-[#f5f5f5] tracking-tight"
+          className="text-[28px] font-semibold text-text-primary tracking-tight transition-colors duration-300"
         >
           {title}
         </motion.h1>
@@ -24,7 +24,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-[14px] text-[#888] mt-1"
+          className="text-[14px] text-text-secondary mt-1 transition-colors duration-300"
         >
           {subtitle}
         </motion.p>

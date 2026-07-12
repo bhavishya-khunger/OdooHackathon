@@ -6,12 +6,12 @@ import { CheckCircle2, AlertTriangle, ArrowRightLeft, CalendarClock, Package, Wr
 import { itemVariants, containerVariants } from './motionVariants';
 
 const statsData = [
-  { label: "Available", value: 128, icon: CheckCircle2, color: "text-[#f5f5f5]" },
-  { label: "Allocated", value: 76, icon: Package, color: "text-[#888]" },
-  { label: "Maintenance", value: 4, icon: Wrench, color: "text-[#888]" },
-  { label: "Active Bookings", value: 9, icon: CalendarClock, color: "text-[#888]" },
-  { label: "Pending Transfers", value: 3, icon: ArrowRightLeft, color: "text-[#888]" },
-  { label: "Upcoming returns", value: 12, icon: AlertTriangle, color: "text-[#888]" }
+  { label: "Available", value: 128, icon: CheckCircle2, color: "text-text-primary" },
+  { label: "Allocated", value: 76, icon: Package, color: "text-text-secondary" },
+  { label: "Maintenance", value: 4, icon: Wrench, color: "text-text-secondary" },
+  { label: "Active Bookings", value: 9, icon: CalendarClock, color: "text-text-secondary" },
+  { label: "Pending Transfers", value: 3, icon: ArrowRightLeft, color: "text-text-secondary" },
+  { label: "Upcoming returns", value: 12, icon: AlertTriangle, color: "text-text-secondary" }
 ];
 
 export const StatsCardGrid = () => {
@@ -28,14 +28,14 @@ export const StatsCardGrid = () => {
           <motion.div
             key={index}
             variants={itemVariants}
-            className="bg-[#141414] border border-[#222] rounded-2xl p-5 flex flex-col justify-between hover:bg-[#1a1a1a] transition-colors cursor-default"
+            className="bg-bg-surface border border-border-base rounded-2xl p-5 flex flex-col justify-between hover:bg-bg-surface-alt transition-colors cursor-default"
           >
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[12px] font-semibold text-[#888] uppercase tracking-wider">{stat.label}</span>
+              <span className="text-[12px] font-semibold text-text-secondary uppercase tracking-wider">{stat.label}</span>
               <Icon className={`h-[18px] w-[18px] ${stat.color}`} />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-[#f5f5f5] tracking-tight">{stat.value}</span>
+              <span className="text-3xl font-bold text-text-primary tracking-tight">{stat.value}</span>
             </div>
           </motion.div>
         );

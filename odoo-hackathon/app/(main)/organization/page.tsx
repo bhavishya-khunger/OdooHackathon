@@ -166,40 +166,40 @@ export default function OrganizationSetup() {
 
   const getStatusBadge = (status: string) => (
     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border ${status === 'Active'
-      ? 'bg-[#141414] text-[#f5f5f5] border-[#333]'
-      : 'bg-[#141414] text-[#666] border-[#222]'
+      ? 'bg-bg-surface text-text-primary border-border-strong'
+      : 'bg-bg-surface text-text-muted border-border-base'
       }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-[#f5f5f5]' : 'bg-[#444]'}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-bg-inverted' : 'bg-[#444]'}`} />
       {status}
     </span>
   );
 
   return (
-    <div className="min-h-full bg-[#0F0F0F] text-[#f5f5f5] p-10 flex flex-col font-sans">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 flex flex-col font-sans">
       
       {/* Header */}
       <div className="flex items-center justify-between mb-10">
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight">Organization Setup</h1>
-          <p className="text-[14px] text-[#888] mt-1">Manage departments, categories, and employees.</p>
+          <p className="text-[14px] text-text-secondary mt-1">Manage departments, categories, and employees.</p>
         </div>
         
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#f5f5f5] hover:bg-[#e5e5e5] border border-transparent rounded-full text-[13px] font-medium text-[#0F0F0F] transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-bg-inverted hover:opacity-90 border border-transparent rounded-full text-[13px] font-medium text-text-inverted transition-colors"
         >
           <Plus className="h-4 w-4" />
           Add {activeTab.slice(0, -1)}
         </button>
       </div>
 
-      <div className="bg-[#141414] border border-[#222] rounded-3xl overflow-hidden">
+      <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden">
         
         {/* Tabs & Search */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-[#222]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-border-base">
           
           {/* Custom Pill Tabs */}
-          <div className="flex items-center bg-[#1A1A1A] border border-[#2A2A2A] rounded-full p-1 text-[13px] font-medium text-[#888]">
+          <div className="flex items-center bg-bg-surface-alt border border-border-base rounded-full p-1 text-[13px] font-medium text-text-secondary">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -208,7 +208,7 @@ export default function OrganizationSetup() {
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSearch(''); }}
                   className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-colors ${
-                    isActive ? 'bg-[#2A2A2A] text-[#f5f5f5]' : 'hover:text-[#f5f5f5]'
+                    isActive ? 'bg-bg-surface-hover text-text-primary' : 'hover:text-text-primary'
                   }`}
                 >
                   <Icon className="h-[14px] w-[14px]" />
@@ -219,13 +219,13 @@ export default function OrganizationSetup() {
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[#666]" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Search ${activeTab}...`}
-              className="pl-10 pr-4 py-2 w-64 md:w-72 bg-[#1A1A1A] border border-[#2A2A2A] rounded-full text-[13px] text-[#f5f5f5] placeholder:text-[#666] focus:outline-none focus:border-[#444] transition-colors"
+              className="pl-10 pr-4 py-2 w-64 md:w-72 bg-bg-surface-alt border border-border-base rounded-full text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus transition-colors"
             />
           </div>
         </div>
@@ -233,7 +233,7 @@ export default function OrganizationSetup() {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-[13px] text-left">
-            <thead className="text-[11px] text-[#666] uppercase tracking-wider border-b border-[#222] bg-[#111]">
+            <thead className="text-[11px] text-text-muted uppercase tracking-wider border-b border-border-base bg-bg-surface-alt">
               <tr>
                 {activeTab === 'departments' && (
                   <>
@@ -263,27 +263,27 @@ export default function OrganizationSetup() {
               {filteredData.map((item: any, i: number) => (
                 <tr
                   key={item.id}
-                  className="hover:bg-[#1a1a1a] transition-colors group"
+                  className="hover:bg-bg-surface-hover transition-colors group"
                 >
                   {activeTab === 'departments' && (
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#222] flex items-center justify-center">
-                            <Building2 className="h-4 w-4 text-[#888]" />
+                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center">
+                            <Building2 className="h-4 w-4 text-text-secondary" />
                           </div>
-                          <span className="font-semibold text-[#f5f5f5] capitalize">{item.departmentName}</span>
+                          <span className="font-semibold text-text-primary capitalize">{item.departmentName}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#333] text-[#f5f5f5]">
+                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary">
                             {getInitials(item.head)}
                           </div>
-                          <span className="text-[#a3a3a3] font-medium capitalize">{item.head}</span>
+                          <span className="text-text-secondary font-medium capitalize">{item.head}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-[#666] capitalize">
+                      <td className="px-6 py-4 text-text-muted capitalize">
                         {item.parentDept || '—'}
                       </td>
                     </>
@@ -293,13 +293,13 @@ export default function OrganizationSetup() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#222] flex items-center justify-center">
-                            <Tag className="h-4 w-4 text-[#888]" />
+                          <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center">
+                            <Tag className="h-4 w-4 text-text-secondary" />
                           </div>
-                          <span className="font-semibold text-[#f5f5f5]">{item.name}</span>
+                          <span className="font-semibold text-text-primary">{item.name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-[#a3a3a3]">
+                      <td className="px-6 py-4 text-text-secondary">
                         {item.description}
                       </td>
                     </>
@@ -309,16 +309,16 @@ export default function OrganizationSetup() {
                     <>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#333] text-[#f5f5f5]">
+                          <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold bg-border-strong text-text-primary">
                             {getInitials(item.name)}
                           </div>
-                          <span className="font-semibold text-[#f5f5f5] capitalize">{item.name}</span>
+                          <span className="font-semibold text-text-primary capitalize">{item.name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-[#a3a3a3] font-medium capitalize">
+                      <td className="px-6 py-4 text-text-secondary font-medium capitalize">
                         {item.role}
                       </td>
-                      <td className="px-6 py-4 text-[#666] capitalize">
+                      <td className="px-6 py-4 text-text-muted capitalize">
                         {item.department || '—'}
                       </td>
                     </>
@@ -331,13 +331,13 @@ export default function OrganizationSetup() {
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => openEditModal(item)}
-                        className="text-[#888] hover:text-[#f5f5f5] p-1.5 rounded-lg hover:bg-[#222] transition-colors"
+                        className="text-text-secondary hover:text-text-primary p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => openDeleteModal(item)}
-                        className="text-[#888] hover:text-[#ff4444] p-1.5 rounded-lg hover:bg-[#2a1a1a] transition-colors"
+                        className="text-text-secondary hover:text-[#ff4444] p-1.5 rounded-lg hover:bg-bg-surface-hover transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -347,7 +347,7 @@ export default function OrganizationSetup() {
               ))}
               {filteredData.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-16 text-center text-[#666] text-sm">
+                  <td colSpan={6} className="px-6 py-16 text-center text-text-muted text-sm">
                     No records found.
                   </td>
                 </tr>
@@ -368,13 +368,13 @@ export default function OrganizationSetup() {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg bg-[#141414] border border-[#2A2A2A] rounded-2xl shadow-2xl overflow-hidden text-[#f5f5f5]"
+              className="relative w-full max-w-lg bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden text-text-primary"
             >
-              <div className="flex items-center justify-between p-6 border-b border-[#222]">
+              <div className="flex items-center justify-between p-6 border-b border-border-base">
                 <h2 className="text-lg font-semibold tracking-tight capitalize">
                   {modalMode === 'add' ? `Add New ${activeTab.slice(0, -1)}` : `Edit ${activeTab.slice(0, -1)}`}
                 </h2>
-                <button onClick={closeFormModal} className="text-[#888] hover:text-[#f5f5f5] transition-colors">
+                <button onClick={closeFormModal} className="text-text-secondary hover:text-text-primary transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -382,29 +382,29 @@ export default function OrganizationSetup() {
                 {activeTab === 'departments' && (
                   <>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Department Name *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Department Name *</label>
                       <input 
                         type="text" 
                         value={formData.departmentName || ''}
                         onChange={(e) => setFormData({...formData, departmentName: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Department Head *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Department Head *</label>
                       <input 
                         type="text" 
                         value={formData.head || ''}
                         onChange={(e) => setFormData({...formData, head: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Parent Department</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Parent Department</label>
                       <select 
                         value={formData.parentDept || 'None'}
                         onChange={(e) => setFormData({...formData, parentDept: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors appearance-none cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors appearance-none cursor-pointer"
                       >
                         <option value="None">None</option>
                         {uniqueDepts.map(d => (
@@ -418,20 +418,20 @@ export default function OrganizationSetup() {
                 {activeTab === 'categories' && (
                   <>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Category Name *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Category Name *</label>
                       <input 
                         type="text" 
                         value={formData.name || ''}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Description</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Description</label>
                       <textarea 
                         value={formData.description || ''}
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                   </>
@@ -440,29 +440,29 @@ export default function OrganizationSetup() {
                 {activeTab === 'employees' && (
                   <>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Employee Name *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Employee Name *</label>
                       <input 
                         type="text" 
                         value={formData.name || ''}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Role *</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Role *</label>
                       <input 
                         type="text" 
                         value={formData.role || ''}
                         onChange={(e) => setFormData({...formData, role: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[13px] font-medium text-[#888] mb-2">Department</label>
+                      <label className="block text-[13px] font-medium text-text-secondary mb-2">Department</label>
                       <select 
                         value={formData.department || 'None'}
                         onChange={(e) => setFormData({...formData, department: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] focus:outline-none focus:border-[#555] transition-colors appearance-none cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] focus:outline-none focus:border-border-focus transition-colors appearance-none cursor-pointer"
                       >
                         <option value="None">None</option>
                         {uniqueDepts.map(d => (
@@ -474,7 +474,7 @@ export default function OrganizationSetup() {
                 )}
 
                 <div>
-                  <label className="block text-[13px] font-medium text-[#888] mb-2">Status</label>
+                  <label className="block text-[13px] font-medium text-text-secondary mb-2">Status</label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input 
@@ -484,7 +484,7 @@ export default function OrganizationSetup() {
                         onChange={() => setFormData({...formData, status: 'Active'})}
                         className="accent-[#f5f5f5]"
                       />
-                      <span className="text-[13px] text-[#f5f5f5]">Active</span>
+                      <span className="text-[13px] text-text-primary">Active</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input 
@@ -494,21 +494,21 @@ export default function OrganizationSetup() {
                         onChange={() => setFormData({...formData, status: 'Inactive'})}
                         className="accent-[#f5f5f5]"
                       />
-                      <span className="text-[13px] text-[#f5f5f5]">Inactive</span>
+                      <span className="text-[13px] text-text-primary">Inactive</span>
                     </label>
                   </div>
                 </div>
               </div>
-              <div className="p-6 border-t border-[#222] flex justify-end gap-3 bg-[#111]">
+              <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt">
                 <button 
                   onClick={closeFormModal}
-                  className="px-5 py-2 text-[13px] font-medium text-[#888] hover:text-[#f5f5f5] transition-colors"
+                  className="px-5 py-2 text-[13px] font-medium text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={handleSave}
-                  className="px-5 py-2 text-[13px] font-medium text-[#0F0F0F] bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-full transition-colors"
+                  className="px-5 py-2 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full transition-colors"
                 >
                   {modalMode === 'add' ? 'Save' : 'Save Changes'}
                 </button>
@@ -529,29 +529,29 @@ export default function OrganizationSetup() {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-[#141414] border border-[#2A2A2A] rounded-2xl shadow-2xl overflow-hidden p-6 text-center"
+              className="relative w-full max-w-sm bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden p-6 text-center"
             >
               <div className="mx-auto w-12 h-12 bg-[#2a1215] text-[#ff4444] flex items-center justify-center rounded-full mb-4">
                 <Trash2 className="h-5 w-5" />
               </div>
-              <h2 className="text-lg font-semibold text-[#f5f5f5] mb-2">
+              <h2 className="text-lg font-semibold text-text-primary mb-2">
                 Delete {activeTab.slice(0, -1)}?
               </h2>
-              <p className="text-[#888] mb-6 text-[13px]">
-                Are you sure you want to delete <span className="font-bold text-[#f5f5f5] capitalize">
+              <p className="text-text-secondary mb-6 text-[13px]">
+                Are you sure you want to delete <span className="font-bold text-text-primary capitalize">
                   {activeTab === 'departments' ? itemToDelete.departmentName : itemToDelete.name}
                 </span>? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-center">
                 <button 
                   onClick={() => setIsDeleteModalOpen(false)}
-                  className="px-5 py-2 flex-1 text-[13px] font-medium text-[#888] hover:text-[#f5f5f5] bg-[#222] hover:bg-[#333] rounded-full transition-colors"
+                  className="px-5 py-2 flex-1 text-[13px] font-medium text-text-secondary hover:text-text-primary bg-bg-surface-hover hover:bg-border-strong rounded-full transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={handleDelete}
-                  className="px-5 py-2 flex-1 text-[13px] font-medium text-[#0F0F0F] bg-[#ff4444] hover:bg-[#ff6666] rounded-full transition-colors"
+                  className="px-5 py-2 flex-1 text-[13px] font-medium text-text-inverted bg-[#ff4444] hover:bg-[#ff6666] rounded-full transition-colors"
                 >
                   Delete
                 </button>

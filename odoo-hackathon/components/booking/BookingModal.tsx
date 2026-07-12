@@ -64,70 +64,70 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
         initial={{ opacity: 0, scale: 0.95 }} 
         animate={{ opacity: 1, scale: 1 }} 
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-sm bg-[#141414] border border-[#2A2A2A] rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm bg-bg-surface border border-border-base rounded-2xl shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between p-6 border-b border-[#222]">
-          <h2 className="text-lg font-semibold tracking-tight text-[#f5f5f5]">
+        <div className="flex items-center justify-between p-6 border-b border-border-base">
+          <h2 className="text-lg font-semibold tracking-tight text-text-primary">
             {mode === 'add' ? 'Book a Slot' : 'Edit Booking'}
           </h2>
-          <button onClick={onClose} className="text-[#888] hover:text-[#f5f5f5] transition-colors">
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
         
         <div className="p-6 space-y-5">
           <div>
-            <label className="block text-[13px] font-medium text-[#888] mb-2">Meeting Title *</label>
+            <label className="block text-[13px] font-medium text-text-secondary mb-2">Meeting Title *</label>
             <input 
               type="text" 
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
               placeholder="e.g. Procurement Team"
-              className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] placeholder:text-[#555] focus:outline-none focus:border-[#555] transition-colors"
+              className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-[#555] focus:outline-none focus:border-border-focus transition-colors"
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[13px] font-medium text-[#888] mb-2">Start Time *</label>
+              <label className="block text-[13px] font-medium text-text-secondary mb-2">Start Time *</label>
               <input 
                 type="time" 
                 value={formData.startTime}
                 onChange={(e) => setFormData({...formData, startTime: e.target.value})}
-                className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none transition-colors"
+                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-[#888] mb-2">End Time *</label>
+              <label className="block text-[13px] font-medium text-text-secondary mb-2">End Time *</label>
               <input 
                 type="time" 
                 value={formData.endTime}
                 onChange={(e) => setFormData({...formData, endTime: e.target.value})}
-                className="w-full px-4 py-2.5 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none transition-colors"
+                className="w-full px-4 py-2.5 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none transition-colors"
               />
             </div>
           </div>
         </div>
         
-        <div className="p-6 border-t border-[#222] flex justify-end gap-3 bg-[#111]">
+        <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt">
           {mode === 'edit' && onDelete && (
             <button 
               onClick={() => onDelete(initialData!.bookingId)}
-              className="px-5 py-2 mr-auto text-[13px] font-medium text-[#ff4444] hover:bg-[#2a1a1a] rounded-full transition-colors"
+              className="px-5 py-2 mr-auto text-[13px] font-medium text-[#ff4444] hover:bg-bg-surface-hover rounded-full transition-colors"
             >
               Cancel Booking
             </button>
           )}
           <button 
             onClick={onClose}
-            className="px-5 py-2 text-[13px] font-medium text-[#888] hover:text-[#f5f5f5] transition-colors"
+            className="px-5 py-2 text-[13px] font-medium text-text-secondary hover:text-text-primary transition-colors"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
             disabled={!formData.title || !formData.startTime || !formData.endTime}
-            className="px-5 py-2 text-[13px] font-medium text-[#0F0F0F] bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
           </button>

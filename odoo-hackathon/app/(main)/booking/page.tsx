@@ -88,24 +88,24 @@ export default function ResourceBookingPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#0F0F0F] text-[#f5f5f5] p-10 font-sans">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 font-sans">
       <div className="max-w-[1000px] mx-auto">
         <PageHeader title="Resource Scheduling" subtitle="Manage bookings and resolve conflicts seamlessly." />
 
-        <div className="bg-[#141414] border border-[#222] rounded-3xl overflow-hidden mt-6">
-          <div className="p-6 md:p-8 border-b border-[#222] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-[#111]">
+        <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden mt-6">
+          <div className="p-6 md:p-8 border-b border-border-base flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-bg-surface-alt">
             
-            <div className="flex items-center gap-4 px-5 py-3.5 bg-[#0F0F0F] border border-[#333] rounded-2xl shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-[#1A1A1A] border border-[#2A2A2A] flex items-center justify-center shrink-0">
-                <MapPin className="h-5 w-5 text-[#888]" />
+            <div className="flex items-center gap-4 px-5 py-3.5 bg-bg-base border border-border-strong rounded-2xl shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-bg-surface-alt border border-border-base flex items-center justify-center shrink-0">
+                <MapPin className="h-5 w-5 text-text-secondary" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                <h3 className="text-sm font-semibold text-text-primary">
                   {resourceContext.resourceName}
                 </h3>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <Calendar className="h-3 w-3 text-[#666]" />
-                  <span className="text-[11px] font-mono font-medium text-[#888] uppercase tracking-widest">
+                  <Calendar className="h-3 w-3 text-text-muted" />
+                  <span className="text-[11px] font-mono font-medium text-text-secondary uppercase tracking-widest">
                     {resourceContext.displayDate}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export default function ResourceBookingPage() {
 
             <button
               onClick={openAddModal}
-              className="px-6 py-3 bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-full text-[13px] font-medium text-[#0F0F0F] flex items-center gap-2 transition-colors w-full md:w-auto justify-center"
+              className="px-6 py-3 bg-bg-inverted hover:opacity-90 rounded-full text-[13px] font-medium text-text-inverted flex items-center gap-2 transition-colors w-full md:w-auto justify-center"
             >
               <Plus className="h-4 w-4" />
               Book a slot

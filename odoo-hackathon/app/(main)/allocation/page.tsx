@@ -92,7 +92,7 @@ export default function AllocationTransferPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#0F0F0F] text-[#f5f5f5] p-10 font-sans">
+    <div className="min-h-full bg-bg-base text-text-primary p-10 font-sans">
       <div className="max-w-[800px] mx-auto">
         <PageHeader title="Allocation & Transfer" subtitle="Manage asset assignment and transfer workflows." />
 
@@ -112,19 +112,19 @@ export default function AllocationTransferPage() {
           )}
         </AnimatePresence>
 
-        <div className="bg-[#141414] border border-[#222] rounded-3xl overflow-hidden p-8 space-y-8">
+        <div className="bg-bg-surface border border-border-base rounded-3xl overflow-hidden p-8 space-y-8">
             
           {/* 1. Asset Selection & Read-Only Display */}
           <div className="space-y-4">
             <div>
-              <label className="block text-[13px] font-medium text-[#888] mb-2">
+              <label className="block text-[13px] font-medium text-text-secondary mb-2">
                 Select Asset to Transfer
               </label>
               <div className="relative">
                 <select 
                   value={activeAssetId}
                   onChange={handleAssetChange}
-                  className="w-full px-4 py-3 bg-[#0F0F0F] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none cursor-pointer transition-colors"
+                  className="w-full px-4 py-3 bg-bg-base border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
                 >
                   {allocatedAssets.map(asset => (
                     <option key={asset.assetId} value={asset.assetId}>
@@ -132,7 +132,7 @@ export default function AllocationTransferPage() {
                     </option>
                   ))}
                 </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#666]">
+                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-text-muted">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -140,15 +140,15 @@ export default function AllocationTransferPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-[#111] border border-[#222] rounded-2xl">
-              <div className="w-12 h-12 rounded-xl bg-[#1A1A1A] border border-[#333] flex items-center justify-center shrink-0">
-                <Box className="h-6 w-6 text-[#888]" />
+            <div className="flex items-center gap-4 p-4 bg-bg-surface-alt border border-border-base rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-bg-surface-alt border border-border-strong flex items-center justify-center shrink-0">
+                <Box className="h-6 w-6 text-text-secondary" />
               </div>
               <div>
-                <h3 className="text-[15px] font-semibold text-[#f5f5f5]">
+                <h3 className="text-[15px] font-semibold text-text-primary">
                   {activeAsset.assetId} - {activeAsset.name}
                 </h3>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 mt-1 rounded-full text-[10px] font-mono font-semibold border bg-[#1A1A1A] text-[#888] border-[#333]">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 mt-1 rounded-full text-[10px] font-mono font-semibold border bg-bg-surface-alt text-text-secondary border-border-strong">
                   {activeAsset.status}
                 </span>
               </div>
@@ -173,36 +173,36 @@ export default function AllocationTransferPage() {
           )}
 
           {/* 3. Transfer Request Form */}
-          <form onSubmit={handleSubmit} className="space-y-6 bg-[#0F0F0F] border border-[#222] p-6 rounded-3xl">
-            <h3 className="text-[11px] font-bold text-[#666] uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-bg-base border border-border-base p-6 rounded-3xl">
+            <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-4">
               <ArrowRightLeft className="h-[14px] w-[14px]" /> Transfer Request
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-[13px] font-medium text-[#888] mb-2">From (Current Owner)</label>
+                <label className="block text-[13px] font-medium text-text-secondary mb-2">From (Current Owner)</label>
                 <input 
                   type="text" 
                   value={`${activeAsset.currentOwner.name} - ${activeAsset.currentOwner.department}`}
                   disabled
-                  className="w-full px-4 py-3 bg-[#111] border border-[#222] rounded-xl text-[13px] text-[#666] cursor-not-allowed"
+                  className="w-full px-4 py-3 bg-bg-surface-alt border border-border-base rounded-xl text-[13px] text-text-muted cursor-not-allowed"
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-medium text-[#888] mb-2">To (New Assignee) *</label>
+                <label className="block text-[13px] font-medium text-text-secondary mb-2">To (New Assignee) *</label>
                 <div className="relative">
                   <select 
                     value={selectedEmployeeId}
                     onChange={(e) => setSelectedEmployeeId(e.target.value)}
                     required
-                    className="w-full px-4 py-3 bg-[#141414] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] focus:outline-none focus:border-[#555] appearance-none cursor-pointer transition-colors"
+                    className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary focus:outline-none focus:border-border-focus appearance-none cursor-pointer transition-colors"
                   >
                     <option value="" disabled>Select employee...</option>
                     {employeeDirectory.filter(emp => emp.id !== activeAsset.currentOwner.employeeId).map(emp => (
                       <option key={emp.id} value={emp.id}>{emp.name}</option>
                     ))}
                   </select>
-                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#666]">
+                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-text-muted">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -212,14 +212,14 @@ export default function AllocationTransferPage() {
             </div>
             
             <div>
-              <label className="block text-[13px] font-medium text-[#888] mb-2">Reason for Transfer *</label>
+              <label className="block text-[13px] font-medium text-text-secondary mb-2">Reason for Transfer *</label>
               <textarea 
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 required
                 placeholder={`e.g., ${activeAsset.currentOwner.name.split(' ')[0]} is getting an upgraded machine...`}
                 rows={3}
-                className="w-full px-4 py-3 bg-[#141414] border border-[#333] rounded-xl text-[13px] text-[#f5f5f5] placeholder:text-[#666] focus:outline-none focus:border-[#555] resize-none transition-colors"
+                className="w-full px-4 py-3 bg-bg-surface border border-border-strong rounded-xl text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus resize-none transition-colors"
               />
             </div>
 
@@ -227,7 +227,7 @@ export default function AllocationTransferPage() {
               <button 
                 disabled={!selectedEmployeeId || !reason || isSubmitting}
                 type="submit"
-                className="px-8 py-3 text-[13px] font-medium text-[#0F0F0F] bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[160px] flex items-center justify-center gap-2"
+                className="px-8 py-3 text-[13px] font-medium text-text-inverted bg-bg-inverted hover:opacity-90 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[160px] flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -240,8 +240,8 @@ export default function AllocationTransferPage() {
           </form>
 
           {/* 4. History Feed */}
-          <div className="border-t border-[#222] pt-8">
-            <h3 className="text-[11px] font-bold text-[#666] uppercase tracking-[0.15em] flex items-center gap-2 mb-6">
+          <div className="border-t border-border-base pt-8">
+            <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] flex items-center gap-2 mb-6">
               <History className="h-[14px] w-[14px]" /> Allocation History
             </h3>
             
@@ -249,16 +249,16 @@ export default function AllocationTransferPage() {
               {activeAsset.history.map((log, index) => (
                 <div key={log.id} className="flex gap-4 group">
                   <div className="flex flex-col items-center mt-1">
-                    <div className="w-2 h-2 rounded-full bg-[#555] border-2 border-[#141414] group-hover:bg-[#f5f5f5] transition-colors" />
+                    <div className="w-2 h-2 rounded-full bg-[#555] border-2 border-[#141414] group-hover:bg-bg-inverted transition-colors" />
                     {index !== activeAsset.history.length - 1 && (
-                      <div className="w-px h-full bg-[#222] mt-1" />
+                      <div className="w-px h-full bg-bg-surface-hover mt-1" />
                     )}
                   </div>
                   <div className="pb-4">
-                    <span className="text-[11px] font-mono text-[#888] font-semibold mb-1 block tracking-widest">
+                    <span className="text-[11px] font-mono text-text-secondary font-semibold mb-1 block tracking-widest">
                       {log.date}
                     </span>
-                    <p className="text-[13px] text-[#f5f5f5]">
+                    <p className="text-[13px] text-text-primary">
                       {log.action}
                     </p>
                   </div>

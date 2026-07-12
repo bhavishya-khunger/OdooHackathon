@@ -23,8 +23,8 @@ export const ActionButtonGroup = () => {
             whileTap={{ scale: 0.98 }}
             className={`px-5 py-2.5 rounded-full text-[13px] font-medium flex items-center gap-2 transition-colors border ${
               btn.primary 
-                ? 'bg-[#f5f5f5] text-[#0F0F0F] border-transparent hover:bg-[#e5e5e5]' 
-                : 'bg-[#141414] text-[#f5f5f5] border-[#2A2A2A] hover:bg-[#1A1A1A] hover:border-[#333]'
+                ? 'bg-bg-inverted text-text-inverted border-transparent hover:opacity-90' 
+                : 'bg-bg-surface text-text-primary border-border-strong hover:bg-bg-surface-hover hover:border-border-focus'
             }`}
           >
             <Icon className="h-4 w-4" />

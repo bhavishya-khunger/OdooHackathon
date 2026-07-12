@@ -22,7 +22,7 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
   const HOUR_HEIGHT = 80;
 
   return (
-    <div className="relative bg-[#0F0F0F] border border-[#222] rounded-2xl p-6 md:p-8 overflow-hidden">
+    <div className="relative bg-bg-base border border-border-base rounded-2xl p-6 md:p-8 overflow-hidden">
       <div className="relative" style={{ height: `${TOTAL_HOURS * HOUR_HEIGHT}px` }}>
         
         {/* Background Grid Lines */}
@@ -32,10 +32,10 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
             className="absolute w-full flex items-center gap-4"
             style={{ top: `${i * HOUR_HEIGHT}px`, transform: 'translateY(-50%)' }}
           >
-            <span className="text-[11px] font-mono font-medium text-[#666] w-12 text-right shrink-0">
+            <span className="text-[11px] font-mono font-medium text-text-muted w-12 text-right shrink-0">
               {String(TIMELINE_START_HOUR + i).padStart(2, '0')}:00
             </span>
-            <div className="flex-1 border-b border-[#222]"></div>
+            <div className="flex-1 border-b border-border-base"></div>
           </div>
         ))}
 
@@ -56,17 +56,17 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
                   onClick={() => onEditBooking(booking)}
-                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-[#333] transition-colors bg-[#141414] border-[#2A2A2A]"
+                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors bg-bg-surface border-border-base"
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
                   }}
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#f5f5f5]" />
-                  <h4 className="font-semibold text-[#f5f5f5] text-[13px]">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-bg-inverted" />
+                  <h4 className="font-semibold text-text-primary text-[13px]">
                     {booking.title}
                   </h4>
-                  <p className="text-[11px] font-mono text-[#888] mt-1 group-hover:text-[#a3a3a3] transition-colors">
+                  <p className="text-[11px] font-mono text-text-secondary mt-1 group-hover:text-text-secondary transition-colors">
                     {booking.startTime} - {booking.endTime}
                   </p>
                 </motion.div>
