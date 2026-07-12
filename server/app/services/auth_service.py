@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
+from app.core.notifications import queue_notification, record_activity
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models import User
 from app.schemas.auth import UserLogin, UserRegister
@@ -31,6 +32,8 @@ class AuthService:
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
+        record_activity(self.session, user.id, "register", "User registered")
+        queue_notification(self.session, user.id, "Welcome to AssetFlow. Your account has been created.", "info")
         return user
 
     def login(self, data: UserLogin) -> tuple[User, str]:
@@ -49,4 +52,6 @@ class AuthService:
             )
 
         token = create_access_token(user.id, user.role)
+        record_activity(self.session, user.id, "login", "User logged in")
+        queue_notification(self.session, user.id, "You signed in successfully.", "info")
         return user, token
