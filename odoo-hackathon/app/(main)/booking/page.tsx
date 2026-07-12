@@ -16,11 +16,36 @@ const resourceContext = {
 
 const initialSchedule: Booking[] = [
   {
+    bookingId: "bk_891",
+    title: "Morning Sync",
+    startTime: "09:00",
+    endTime: "09:30",
+    status: "Completed",
+    reminder: false
+  },
+  {
     bookingId: "bk_892",
     title: "Procurement Team",
-    startTime: "09:00",
-    endTime: "10:00",
-    status: "Confirmed"
+    startTime: "10:00",
+    endTime: "11:00",
+    status: "Ongoing",
+    reminder: false
+  },
+  {
+    bookingId: "bk_893",
+    title: "Project Alpha Kickoff",
+    startTime: "13:00",
+    endTime: "14:30",
+    status: "Upcoming",
+    reminder: true
+  },
+  {
+    bookingId: "bk_894",
+    title: "Interview (John Doe)",
+    startTime: "15:00",
+    endTime: "16:00",
+    status: "Cancelled",
+    reminder: false
   }
 ];
 
@@ -57,6 +82,7 @@ export default function ResourceBookingPage() {
 
     const hasCollision = schedule.some(existing => {
       if (modalMode === 'edit' && existing.bookingId === newBooking.bookingId) return false;
+      if (existing.status === 'Cancelled') return false; // Ignore cancelled slots
       const existStart = toMinutes(existing.startTime);
       const existEnd = toMinutes(existing.endTime);
       return (newStart < existEnd && newEnd > existStart);
@@ -82,8 +108,8 @@ export default function ResourceBookingPage() {
     setConflict(null);
   };
 
-  const handleDeleteBooking = (bookingId: string) => {
-    setSchedule(schedule.filter(b => b.bookingId !== bookingId));
+  const handleCancelBooking = (bookingId: string) => {
+    setSchedule(schedule.map(b => b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b));
     setIsModalOpen(false);
   };
 
@@ -140,7 +166,7 @@ export default function ResourceBookingPage() {
             initialData={editingBooking}
             onClose={() => setIsModalOpen(false)}
             onSave={handleSaveBooking}
-            onDelete={handleDeleteBooking}
+            onCancel={handleCancelBooking}
           />
         )}
       </AnimatePresence>

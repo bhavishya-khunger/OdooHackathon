@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Bell } from 'lucide-react';
 import { Booking } from './BookingModal';
 
 interface TimelineProps {
@@ -56,18 +57,42 @@ export const Timeline: React.FC<TimelineProps> = ({ schedule, conflict, onEditBo
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0 }}
                   onClick={() => onEditBooking(booking)}
-                  className="absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors bg-bg-surface border-border-base duration-300"
+                  className={`absolute w-full md:w-3/4 left-0 md:left-4 rounded-xl cursor-pointer overflow-hidden p-3 border group hover:border-border-strong transition-colors duration-300 ${
+                    booking.status === 'Ongoing' ? 'bg-[#f0fdf4] border-[#bbf7d0] dark:bg-[#10301a] dark:border-[#1a4d29]' :
+                    booking.status === 'Completed' ? 'bg-[#f3f4f6] border-[#e5e7eb] dark:bg-[#1f2937] dark:border-[#374151] opacity-70' :
+                    booking.status === 'Cancelled' ? 'bg-[#fef2f2] border-[#fecaca] dark:bg-[#2a1215] dark:border-[#4a1a1f] opacity-50' :
+                    'bg-[#eff6ff] border-[#bfdbfe] dark:bg-[#102a40] dark:border-[#1a4266]'
+                  }`}
                   style={{
                     top: `${top}px`,
                     height: `${height}px`,
                   }}
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-bg-inverted transition-colors duration-300" />
-                  <h4 className="font-semibold text-text-primary text-[13px] transition-colors duration-300">
-                    {booking.title}
-                  </h4>
-                  <p className="text-[11px] font-mono text-text-secondary mt-1 group-hover:text-text-primary transition-colors duration-300">
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 transition-colors duration-300 ${
+                    booking.status === 'Ongoing' ? 'bg-[#16a34a] dark:bg-[#4ade80]' :
+                    booking.status === 'Completed' ? 'bg-[#6b7280] dark:bg-[#9ca3af]' :
+                    booking.status === 'Cancelled' ? 'bg-[#ef4444] dark:bg-[#f87171]' :
+                    'bg-[#2563eb] dark:bg-[#3b82f6]'
+                  }`} />
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className={`font-semibold text-[13px] transition-colors duration-300 ${
+                      booking.status === 'Cancelled' ? 'line-through text-text-muted' : 
+                      booking.status === 'Ongoing' ? 'text-[#166534] dark:text-[#4ade80]' :
+                      'text-text-primary'
+                    }`}>
+                      {booking.title}
+                    </h4>
+                    {booking.reminder && booking.status === 'Upcoming' && (
+                      <Bell className="h-3.5 w-3.5 text-[#2563eb] dark:text-[#3b82f6] shrink-0" />
+                    )}
+                  </div>
+                  <p className={`text-[11px] font-mono mt-1 transition-colors duration-300 ${
+                    booking.status === 'Cancelled' ? 'text-text-muted' : 'text-text-secondary group-hover:text-text-primary'
+                  }`}>
                     {booking.startTime} - {booking.endTime}
+                    <span className="ml-2 px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[9px] uppercase tracking-wider">
+                      {booking.status}
+                    </span>
                   </p>
                 </motion.div>
               );

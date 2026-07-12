@@ -7,7 +7,8 @@ export interface Booking {
   title: string;
   startTime: string;
   endTime: string;
-  status: string;
+  status: 'Upcoming' | 'Ongoing' | 'Completed' | 'Cancelled';
+  reminder?: boolean;
 }
 
 interface BookingModalProps {
@@ -16,14 +17,16 @@ interface BookingModalProps {
   initialData: Booking | null;
   onClose: () => void;
   onSave: (booking: Booking) => void;
-  onDelete?: (bookingId: string) => void;
+  onCancel?: (bookingId: string) => void;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initialData, onClose, onSave, onDelete }) => {
+export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initialData, onClose, onSave, onCancel }) => {
   const [formData, setFormData] = useState<Partial<Booking>>({
     title: '',
     startTime: '09:00',
     endTime: '10:00',
+    status: 'Upcoming',
+    reminder: false
   });
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
       if (mode === 'edit' && initialData) {
         setFormData(initialData);
       } else {
-        setFormData({ title: '', startTime: '10:00', endTime: '11:00' });
+        setFormData({ title: '', startTime: '10:00', endTime: '11:00', status: 'Upcoming', reminder: false });
       }
     }
   }, [isOpen, mode, initialData]);
@@ -46,7 +49,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
       title: formData.title,
       startTime: formData.startTime,
       endTime: formData.endTime,
-      status: initialData?.status || 'Confirmed'
+      status: formData.status as 'Upcoming' | 'Ongoing' | 'Completed' | 'Cancelled',
+      reminder: formData.reminder
     };
     onSave(bookingToSave);
   };
@@ -107,12 +111,30 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, mode, initia
               />
             </div>
           </div>
+
+          <div className="flex items-center justify-between bg-bg-surface-alt p-4 rounded-xl border border-border-base">
+            <div>
+              <p className="text-[13px] font-medium text-text-primary flex items-center gap-2">
+                Set Reminder
+              </p>
+              <p className="text-[11px] text-text-secondary mt-0.5">Get notified 15 mins before</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={formData.reminder || false}
+                onChange={(e) => setFormData({...formData, reminder: e.target.checked})}
+                className="sr-only peer" 
+              />
+              <div className="w-11 h-6 bg-border-strong peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-text-primary"></div>
+            </label>
+          </div>
         </div>
         
         <div className="p-6 border-t border-border-base flex justify-end gap-3 bg-bg-surface-alt transition-colors duration-300">
-          {mode === 'edit' && onDelete && (
+          {mode === 'edit' && onCancel && formData.status !== 'Cancelled' && (
             <button 
-              onClick={() => onDelete(initialData!.bookingId)}
+              onClick={() => onCancel(initialData!.bookingId)}
               className="px-5 py-2 mr-auto text-[13px] font-medium text-red-600 dark:text-[#ff4444] hover:bg-bg-surface-hover rounded-full transition-colors"
             >
               Cancel Booking
