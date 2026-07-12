@@ -115,7 +115,7 @@ export default function ReportsPage() {
                   itemStyle={{ color: primaryColor, fontWeight: 600 }}
                   wrapperStyle={{ outline: 'none' }}
                 />
-                <Line type="monotone" dataKey="value" stroke={primaryColor} strokeWidth={3} dot={{ r: 4, fill: tooltipBg, stroke: primaryColor, strokeWidth: 2 }} activeDot={{ r: 6, fill: primaryColor, outline: 'none' }} />
+                <Line type="monotone" dataKey="value" stroke={primaryColor} strokeWidth={3} dot={{ r: 4, fill: tooltipBg, stroke: primaryColor, strokeWidth: 2 }} activeDot={{ r: 6, fill: primaryColor }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
